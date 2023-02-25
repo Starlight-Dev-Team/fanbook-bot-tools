@@ -1,0 +1,74 @@
+name: 部署
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'public/**'
+jobs:
+  build:
+    name: 构建
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: 准备 Git 环境
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 修改 Git 用户设置
+        run: |
+          git config --global user.email "kaikai_miniworld@outlook.com"
+          git config --global user.name "kaikaibenkai"
+      - name: 拉取代码
+        run: |
+          git pull -f origin main
+          git push -d origin gh-pages
+          git gc
+          git switch -c gh-pages
+      - name: 准备 Node.js 环境
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: 安装依赖
+        run: |
+          npm install -g yarn
+          yarn
+      - name: 构建静态文档
+        run: |
+          yarn build
+          git add dist -f
+          git commit -m "部署"
+      - name: 推送物料
+        run: git push origin gh-pages --set-upstream
+  deploy:
+    name: 部署
+    needs: build
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 准备 Git 环境
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 下载物料
+        run: |
+          git pull -f origin gh-pages
+          git switch gh-pages
+      - name: 设置环境
+        uses: actions/configure-pages@v2
+        with:
+          path: dist
+      - name: 上传物料
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: dist
+      - name: 发布线上
+        uses: actions/deploy-pages@v1
