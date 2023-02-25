@@ -1,0 +1,83 @@
+<script lang="ts" setup>
+import { onBeforeMount, ref } from 'vue';
+
+import {
+  Avatar,
+  Button,
+  Doption,
+  Dropdown,
+  Dsubmenu,
+  PageHeader,
+  Space,
+  TypographyText,
+} from '@arco-design/web-vue';
+
+import { useAccountStore } from '@/stores/account';
+
+import { Bot } from '@starlight-dev-team/fanbook-api-sdk';
+import type { Profile } from '@starlight-dev-team/fanbook-api-sdk/dist/types';
+
+import BotInfo from './BotInfo.vue';
+
+const accountStore = useAccountStore();
+
+const defaultTitle = 'Fanbook 机器人工具';
+
+let botsProfile: Record<string, Profile> = {};
+
+let activeProfile = ref(undefined as Profile | undefined);
+
+onBeforeMount(async () => {
+  const store = useAccountStore();
+  for (const token of store.botTokens) {
+    const bot = new Bot(token);
+    botsProfile[token] = await bot.getProfile();
+  }
+  activeProfile.value = botsProfile[accountStore.activeBotToken ?? ''];
+});
+</script>
+
+<template>
+  <PageHeader
+    :title='$route.meta.title as string ?? defaultTitle'
+    :show-back='$route.path !== "/"'
+    @back='$router.back'
+  >
+    <template #extra>
+      <Dropdown v-if='activeProfile' trigger='hover' position='br'>
+        <BotInfo class='avatar' :profile='activeProfile' />
+        <template #content>
+          <Dsubmenu trigger='hover'>
+            <template #default>切换机器人</template>
+            <template #content>
+              <Doption class='bot-list' v-for='profile in botsProfile'>
+                <BotInfo :profile='profile' />
+              </Doption>
+            </template>
+          </Dsubmenu>
+          <Doption @click='() => $router.push("/login")'>
+            添加机器人
+          </Doption>
+        </template>
+      </Dropdown>
+      <Space v-else>
+        <Button type='primary' @click='() => $router.push("/login")'>
+          登录
+        </Button>
+      </Space>
+    </template>
+  </PageHeader>
+</template>
+
+<style scoped>
+:deep(.arco-page-header-extra) {
+  overflow: visible;
+  height: 30px;
+}
+:deep(.avatar) {
+  margin-top: -5px;
+}
+.bot-list {
+  line-height: unset;
+}
+</style>

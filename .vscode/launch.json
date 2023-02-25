@@ -1,0 +1,10 @@
+{
+  "configurations": [
+    {
+      "name": "启动调试",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "yarn dev",
+    }
+  ]
+}
