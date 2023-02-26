@@ -47,8 +47,6 @@ export function setBots(tokens: string[]): void {
  * @param token 机器人令牌
  */
 export function addBot(token: string): void {
-  console.log(BOT_TOKEN_REGEXP, token, BOT_TOKEN_REGEXP.test(token));
-  debugger;
   setBots(getBots().concat(token));
   useAccountStore().$patch({
     activeBotToken: token,
