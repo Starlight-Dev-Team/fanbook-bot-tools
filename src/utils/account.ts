@@ -83,3 +83,30 @@ export function removeBot(token: string): void {
 export function hasBot(token: string): boolean {
   return getBots().includes(token);
 }
+/**
+ * 切换到指定机器人。
+ * @param token 机器人令牌
+ */
+export function switchBot(token: string): void {
+  const store = useAccountStore();
+  // 已是当前机器人
+  if (token === store.activeBotToken) return;
+  // 在机器人列表中，把要切换到的机器人放在最前面
+  let has = false;
+  const bots = getBots().filter((v) => {
+    if (v === token) {
+      has = true;
+      return false;
+    }
+    return true;
+  });
+  // 如果没有找到，无副作用
+  if (has) {
+    setBots([token].concat(bots));
+    useAccountStore().$patch({
+      activeBotToken: token,
+    });
+    // 重新加载页面，保证登录态正确
+    location.reload();
+  }
+}

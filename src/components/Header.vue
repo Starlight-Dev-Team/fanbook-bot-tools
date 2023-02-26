@@ -7,6 +7,7 @@ import {
   Doption,
   Dropdown,
   Dsubmenu,
+  Message,
   PageHeader,
   Space,
   TypographyText,
@@ -17,6 +18,8 @@ import { useAccountStore } from '@/stores/account';
 import { Bot } from '@starlight-dev-team/fanbook-api-sdk';
 import type { Profile } from '@starlight-dev-team/fanbook-api-sdk/dist/types';
 
+import { switchBot } from '@/utils/account';
+
 import BotInfo from './BotInfo.vue';
 
 const accountStore = useAccountStore();
@@ -26,6 +29,14 @@ const defaultTitle = 'Fanbook 机器人工具';
 let botsProfile: Record<string, Profile> = {};
 
 let activeProfile = ref(undefined as Profile | undefined);
+
+function switchToBot(token: string) {
+  Message.loading({
+    content: '正在切换机器人',
+    duration: NaN,
+  });
+  switchBot(token);
+}
 
 onBeforeMount(async () => {
   const store = useAccountStore();
@@ -50,7 +61,11 @@ onBeforeMount(async () => {
           <Dsubmenu trigger='hover'>
             <template #default>切换机器人</template>
             <template #content>
-              <Doption class='bot-list' v-for='profile in botsProfile'>
+              <Doption
+                v-for='(profile, token) in botsProfile'
+                class='bot-list'
+                @click='() => switchToBot(token)'
+              >
                 <BotInfo :profile='profile' />
               </Doption>
             </template>
