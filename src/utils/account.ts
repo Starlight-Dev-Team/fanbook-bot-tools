@@ -10,7 +10,9 @@ export const BOT_TOKEN_REGEXP = /[0-9a-f]{96}/g;
  * @returns 令牌是否有效
  */
 export function isBotTokenValid(token: string): boolean {
-  return BOT_TOKEN_REGEXP.test(token);
+  // 重新构造一个 RegExp ，否则结果会有错误
+  const regexp = new RegExp(BOT_TOKEN_REGEXP, BOT_TOKEN_REGEXP.flags);
+  return regexp.test(token);
 }
 /**
  * 获取机器人列表。
@@ -46,14 +48,9 @@ export function setBots(tokens: string[]): void {
  */
 export function addBot(token: string): void {
   setBots(getBots().concat(token));
-  const bots = getBots();
-  console.log(bots);
-  if (bots.length === 1) {
-    const store = useAccountStore();
-    store.$patch({
-      activeBotToken: bots[0],
-    });
-  }
+  useAccountStore().$patch({
+    activeBotToken: token,
+  });
 }
 /**
  * 移除机器人
@@ -85,4 +82,31 @@ export function removeBot(token: string): void {
  */
 export function hasBot(token: string): boolean {
   return getBots().includes(token);
+}
+/**
+ * 切换到指定机器人。
+ * @param token 机器人令牌
+ */
+export function switchBot(token: string): void {
+  const store = useAccountStore();
+  // 已是当前机器人
+  if (token === store.activeBotToken) return;
+  // 在机器人列表中，把要切换到的机器人放在最前面
+  let has = false;
+  const bots = getBots().filter((v) => {
+    if (v === token) {
+      has = true;
+      return false;
+    }
+    return true;
+  });
+  // 如果没有找到，无副作用
+  if (has) {
+    setBots([token].concat(bots));
+    useAccountStore().$patch({
+      activeBotToken: token,
+    });
+    // 重新加载页面，保证登录态正确
+    location.reload();
+  }
 }
