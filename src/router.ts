@@ -11,6 +11,10 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/About.vue'),
   },
   {
+    path: '/version',
+    component: () => import('@/pages/Version.vue'),
+  },
+  {
     path: '/login',
     component: () => import('@/pages/Login.vue'),
     meta: { title: '添加机器人' },
