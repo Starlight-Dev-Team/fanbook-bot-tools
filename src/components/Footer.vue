@@ -19,6 +19,9 @@ const data: FooterItem[] = [{
 }, {
   label: '关于',
   link: '/about',
+}, {
+  label: '版本信息',
+  link: '/version',
 }];
 </script>
 
