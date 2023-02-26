@@ -10,7 +10,9 @@ export const BOT_TOKEN_REGEXP = /[0-9a-f]{96}/g;
  * @returns 令牌是否有效
  */
 export function isBotTokenValid(token: string): boolean {
-  return BOT_TOKEN_REGEXP.test(token);
+  // 重新构造一个 RegExp ，否则结果会有错误
+  const regexp = new RegExp(BOT_TOKEN_REGEXP, BOT_TOKEN_REGEXP.flags);
+  return regexp.test(token);
 }
 /**
  * 获取机器人列表。
@@ -45,15 +47,12 @@ export function setBots(tokens: string[]): void {
  * @param token 机器人令牌
  */
 export function addBot(token: string): void {
+  console.log(BOT_TOKEN_REGEXP, token, BOT_TOKEN_REGEXP.test(token));
+  debugger;
   setBots(getBots().concat(token));
-  const bots = getBots();
-  console.log(bots);
-  if (bots.length === 1) {
-    const store = useAccountStore();
-    store.$patch({
-      activeBotToken: bots[0],
-    });
-  }
+  useAccountStore().$patch({
+    activeBotToken: token,
+  });
 }
 /**
  * 移除机器人
