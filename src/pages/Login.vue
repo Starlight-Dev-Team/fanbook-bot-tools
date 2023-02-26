@@ -6,7 +6,7 @@ import {
   Button,
   Form,
   FormItem,
-  InputPassword,
+  Input,
   Message,
   Space,
 } from '@arco-design/web-vue';
@@ -125,7 +125,7 @@ function onSubmit() {
     @submit='onSubmit'
   >
     <FormItem label='机器人 Token' :validate-status='tokenValidate' feedback>
-      <InputPassword
+      <Input
         autocomplete='current-password'
         v-model='form.token'
         :min-length='TOKEN_LENGTH'
@@ -136,7 +136,7 @@ function onSubmit() {
         仅保存在本地，不上传到服务端。
       </template>
     </FormItem>
-    <FormItem>
+    <FormItem class='operation'>
       <Button type='primary' html-type='submit'>
         确认添加
       </Button>
@@ -161,5 +161,8 @@ function onSubmit() {
 .avatar svg {
   color: var(--color-text-2);
   font-size: 32px;
+}
+.operation {
+  margin-top: -12px;
 }
 </style>
