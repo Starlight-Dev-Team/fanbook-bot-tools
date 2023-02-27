@@ -42,4 +42,7 @@ footer {
   flex-direction: column;
   justify-content: center;
 }
+.arco-typography b {
+  font-weight: bold;
+}
 </style>
