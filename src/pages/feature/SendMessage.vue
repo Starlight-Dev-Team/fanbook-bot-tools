@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
+import { h, reactive, ref } from 'vue';
 
 import {
   Button,
   Form,
   FormItem,
   Message,
+  Modal,
   Spin,
   Textarea,
   TypographyText,
@@ -41,7 +42,38 @@ async function selectTarget() {
   input.target = chat;
 }
 
+/**
+ * 询问用户是否确定发送**非纯文本内容**。
+ * @returns 是否确定
+ */
+function warnNonPlain(): Promise<boolean> {
+  return new Promise((resolve) => {
+    Modal.warning({
+      title: '内容格式提示',
+      content: () => h(
+        'div',
+        null,
+        [
+          '消息内容解析为',
+          h(TypographyText, { bold: true }, ['非纯文本']),
+          '！',
+        ]
+      ),
+      hideCancel: false,
+      onOk: () => resolve(true),
+      onCancel: () => resolve(false),
+    });
+  });
+}
+
 async function onSubmit() {
+  let json = undefined;
+  try { // 判断是否非纯文本
+    json = JSON.parse(input.content);
+  } catch {}
+  if (json !== undefined) { // 非纯文本
+    if (!await warnNonPlain()) return; // 用户取消操作
+  }
   status.value = 'loading';
   try {
     await bot.sendMessage({
