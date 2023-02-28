@@ -29,12 +29,9 @@ const data: FooterItem[] = [{
   <TypographyText>
     <TypographyText v-for='(item, index) in data'>
       <Divider v-if='!!index' direction='vertical' />
-      <Link v-if='item.link.startsWith("/")' :to='item.link'>
+      <Link :to='item.link'>
         {{ item.label }}
       </Link>
-      <ALink v-else :href='item.link'>
-        {{ item.label }}
-      </ALink>
     </TypographyText>
   </TypographyText>
   <TypographyText>
