@@ -1,23 +1,28 @@
 <script lang="ts" setup>
-import { RouterLink } from 'vue-router';
+import { RouterLink, type RouterLinkProps } from 'vue-router';
 
 import { Link } from '@arco-design/web-vue';
 
-export interface Props {
+export interface Props extends RouterLinkProps {
   to: string;
   hoverable?: boolean;
 }
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   hoverable: true,
 });
+
+const external = !props.to.startsWith('/');
 </script>
 
 <template>
-  <Link :hoverable='hoverable'>
-    <RouterLink class='link' :to='to'>
-      <slot />
-    </RouterLink>
+  <Link v-if='external' :href='to' target='_blank'>
+    <slot />
   </Link>
+  <RouterLink v-else v-slot='{ navigate }' :to='to' custom>
+    <Link :href='to' :hoverable='hoverable' @click='navigate'>
+      <slot />
+    </Link>
+  </RouterLink>
 </template>
 
 <style scoped>
