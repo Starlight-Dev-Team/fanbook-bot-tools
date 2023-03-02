@@ -13,7 +13,7 @@ import {
 } from '@arco-design/web-vue';
 import type { FieldRule } from '@arco-design/web-vue';
 
-import selectChat from '@/utils/biz/select-chat';
+import { selectChat } from '@/utils/biz/select-chat';
 import { Bot } from '@starlight-dev-team/fanbook-api-sdk';
 import { useAccountStore } from '@/stores/account';
 
