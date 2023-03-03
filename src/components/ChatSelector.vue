@@ -36,7 +36,6 @@ async function add() {
   const res = await selectChat({
     bot,
   });
-  console.log(res);
   if (!res.chat.length) return;
   const chat = res.chat[0];
   input.value.push(chat);
@@ -61,7 +60,7 @@ function remove(index: number) {
     </Button>
     <Tag
       v-for='(chat, index) in input'
-      :key='index'
+      :key='String(chat)'
       closable
       @close='() => remove(index)'
     >
