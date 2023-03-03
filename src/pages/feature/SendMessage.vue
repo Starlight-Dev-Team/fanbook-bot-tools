@@ -13,15 +13,20 @@ import {
 } from '@arco-design/web-vue';
 import type { FieldRule } from '@arco-design/web-vue';
 
-import { selectChat } from '@/utils/biz/select-chat';
 import { Bot } from '@starlight-dev-team/fanbook-api-sdk';
+
+import ChatSelector from '@/components/ChatSelector.vue';
+
 import { useAccountStore } from '@/stores/account';
 
 interface Input {
-  target: bigint;
+  targets: bigint[];
   content: string;
 }
-const input = reactive({} as Input);
+const input = reactive({
+  targets: [],
+  content: '',
+} as Input);
 
 const REQUEIRE_RULE: FieldRule = {
   required: true,
@@ -32,15 +37,6 @@ type Status = 'default' | 'loading';
 const status = ref('default' as Status);
 
 const bot = new Bot(useAccountStore().activeBotToken);
-
-async function selectTarget() {
-  const res = await selectChat({
-    bot,
-  });
-  if (!res.chat) return;
-  const chat = res.chat[0];
-  input.target = chat;
-}
 
 /**
  * 询问用户是否确定发送**非纯文本内容**。
@@ -76,11 +72,13 @@ async function onSubmit() {
   }
   status.value = 'loading';
   try {
-    await bot.sendMessage({
-      chat: input.target,
-      text: input.content,
-      description: input.content,
-    });
+    for (const chat of input.targets) { // 逐个发送
+      await bot.sendMessage({
+        chat,
+        text: input.content,
+        description: input.content,
+      });
+    }
     Message.success({
       content: '发送成功',
       duration: 2500,
@@ -104,11 +102,8 @@ async function onSubmit() {
       auto-label-width
       @submit-success='onSubmit'
     >
-      <FormItem label='消息接收者' field='target' :rules='REQUEIRE_RULE'>
-        <Button type='secondary' @click='selectTarget'>选择聊天</Button>
-        <TypographyText v-if='input.target'>
-          当前选择：{{ input.target }}
-        </TypographyText>
+      <FormItem label='消息接收者' field='targets' :rules='REQUEIRE_RULE'>
+        <ChatSelector v-model='input.targets' />
       </FormItem>
       <FormItem label='消息内容' field='content' :rules='REQUEIRE_RULE'>
         <Textarea v-model='input.content' allow-clear :auto-size='{

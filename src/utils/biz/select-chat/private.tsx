@@ -124,7 +124,7 @@ export function selectPrivateChat(
         >
           <Input
             v-model={userShortId.value}
-            v-slots={{ prefix: '#' }}
+            v-slots={{ prefix: () => '#' }}
             onChange={onInputChange}
           />
         </FormItem>
