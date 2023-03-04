@@ -9,6 +9,9 @@ import {
   Dsubmenu,
   Message,
   PageHeader,
+  Skeleton,
+  SkeletonLine,
+  SkeletonShape,
   Space,
   TypographyText,
 } from '@arco-design/web-vue';
@@ -38,6 +41,8 @@ function switchToBot(token: string) {
   switchBot(token);
 }
 
+const loading = ref(true);
+
 onBeforeMount(async () => {
   const store = useAccountStore();
   for (const token of store.botTokens) {
@@ -45,6 +50,7 @@ onBeforeMount(async () => {
     botsProfile[token] = await bot.getProfile();
   }
   activeProfile.value = botsProfile[accountStore.activeBotToken ?? ''];
+  loading.value = false;
 });
 </script>
 
@@ -55,7 +61,7 @@ onBeforeMount(async () => {
     @back='$router.back'
   >
     <template #extra>
-      <Dropdown v-if='activeProfile' trigger='hover' position='br'>
+      <Dropdown v-if='activeProfile || loading' trigger='hover' position='br'>
         <BotInfo class='avatar' :profile='activeProfile' />
         <template #content>
           <Dsubmenu trigger='hover'>
