@@ -1,21 +1,39 @@
 <script lang="ts" setup>
+import { provide, onActivated, ref } from 'vue';
+
 import { RouterView } from 'vue-router';
 
 import {
   LayoutContent,
   LayoutFooter,
   LayoutHeader,
+  Spin,
 } from '@arco-design/web-vue';
 import '@arco-design/web-vue/dist/arco.css';
 
+import router from '@/router';
+
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
+
+const loading = ref(true);
+
+router.beforeEach(() => {
+  loading.value = true;
+});
+router.afterEach(() => {
+  loading.value = false;
+});
+
+provide('loading', loading);
 </script>
 
 <template>
-  <LayoutHeader><Header /></LayoutHeader>
-  <LayoutContent><RouterView /></LayoutContent>
-  <LayoutFooter><Footer /></LayoutFooter>
+  <Spin :loading='loading' dot>
+    <LayoutHeader><Header /></LayoutHeader>
+    <LayoutContent><RouterView /></LayoutContent>
+    <LayoutFooter><Footer /></LayoutFooter>
+  </Spin>
 </template>
 
 <style>
