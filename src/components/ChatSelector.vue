@@ -11,12 +11,19 @@ import { IconPlus } from '@arco-design/web-vue/es/icon';
 import { Bot } from '@starlight-dev-team/fanbook-api-sdk';
 
 import { selectChat } from '@/utils/biz/select-chat';
-import type { SelectChatConfig } from '@/utils/biz/select-chat';
+import type {
+  SelectChatConfig,
+  SelectChatResponse,
+} from '@/utils/biz/select-chat';
 
 import { useAccountStore } from '@/stores/account';
 
+export interface SelectedChat {
+  guild?: bigint;
+  chat: bigint;
+}
 export interface Props {
-  modelValue: bigint[];
+  modelValue: SelectedChat[];
   max?: number;
   selector?: SelectChatConfig;
 }
@@ -37,8 +44,12 @@ async function add() {
     bot,
   });
   if (!res.chat.length) return;
-  const chat = res.chat[0];
-  input.value.push(chat);
+  for (const item of res.chat) {
+    input.value.push({
+      guild: res.guild,
+      chat: item,
+    });
+  }
 }
 
 function remove(index: number) {
@@ -64,7 +75,7 @@ function remove(index: number) {
       closable
       @close='() => remove(index)'
     >
-      {{ chat }}
+      {{ chat.chat }}
     </Tag>
   </Space>
 </template>

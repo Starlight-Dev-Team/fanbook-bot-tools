@@ -519,10 +519,10 @@
   resolved "https://registry.npmjs.org/@rushstack/eslint-patch/-/eslint-patch-1.2.0.tgz#8be36a1f66f3265389e90b5f9c9962146758f728"
   integrity sha512-sXo/qW2/pAcmT43VoRKOJbDOfV3cYpq3szSVfIThQXNt+E4DfKj361vaAt3c88U5tPUxzEswam7GW48PJqtKAg==
 
-"@starlight-dev-team/fanbook-api-sdk@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.npmjs.org/@starlight-dev-team/fanbook-api-sdk/-/fanbook-api-sdk-0.3.1.tgz#ffd550b28622ab60e286932fbfa95ed2e6404cca"
-  integrity sha512-0P8N9G30XMNsE4uyqoqJ+dkXx4ljKXw+PPUR/XanvGHon7s7EqFzrnsBkxw7SlTYOzJn26nUOcLzV0PAAY7KmQ==
+"@starlight-dev-team/fanbook-api-sdk@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/@starlight-dev-team/fanbook-api-sdk/-/fanbook-api-sdk-0.4.1.tgz#f238fc4085050bdd06ad6f0a49d92fd08c2e972f"
+  integrity sha512-ZbAMaEO3xFG53fb0GP2ZbiBtEJbT6IKpdCBPfkADaGeds3E5bNpn+qtU543FE0xHUtrAFPuNM5FYR0ILUQnKzw==
   dependencies:
     "@types/json-bigint" "^1.0.1"
     "@types/qs" "^6.9.7"

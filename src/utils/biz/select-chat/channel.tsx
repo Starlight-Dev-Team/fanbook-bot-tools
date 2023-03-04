@@ -83,7 +83,8 @@ export interface SelectChannelConfig {
 export function selectChannel(
   config: SelectChannelConfig,
 ): Promise<{
-    chat: bigint[];
+    guild?: bigint;
+    channel: bigint[];
   }> {
   let {
     bot,
@@ -123,7 +124,6 @@ export function selectChannel(
             });
           }
         }
-        console.log(tableData);
         guildIdStatus.value = 'success';
       } catch { // 获取失败
         guildIdStatus.value = 'error';
@@ -133,11 +133,16 @@ export function selectChannel(
       const chat: bigint[] = [];
       for (const item of result.value) chat.push(BigInt(item));
       modal.close();
-      reslove({ chat });
+      reslove({
+        guild: BigInt(guildId.value),
+        channel: chat,
+      });
     }
     function onCancel(): void {
       modal.close();
-      reslove({ chat: [] });
+      reslove({
+        channel: [],
+      });
     }
     const modal = Modal.open({
       title,

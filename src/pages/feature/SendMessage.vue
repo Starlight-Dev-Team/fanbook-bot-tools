@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="tsx" setup>
 import { h, reactive, ref } from 'vue';
 
 import {
@@ -8,24 +8,32 @@ import {
   Message,
   Modal,
   Spin,
+  Step,
+  Steps,
+  Switch,
+  Progress,
   Textarea,
   TypographyText,
+TypographyParagraph,
 } from '@arco-design/web-vue';
 import type { FieldRule } from '@arco-design/web-vue';
 
 import { Bot } from '@starlight-dev-team/fanbook-api-sdk';
 
 import ChatSelector from '@/components/ChatSelector.vue';
+import type { SelectedChat } from '@/components/ChatSelector.vue';
 
 import { useAccountStore } from '@/stores/account';
 
 interface Input {
-  targets: bigint[];
+  targets: Array<SelectedChat>;
   content: string;
+  sendAsOneByOne: boolean;
 }
 const input = reactive({
   targets: [],
   content: '',
+  sendAsOneByOne: false,
 } as Input);
 
 const REQUEIRE_RULE: FieldRule = {
@@ -38,23 +46,21 @@ const status = ref('default' as Status);
 
 const bot = new Bot(useAccountStore().activeBotToken);
 
+const messageDescription = ref('');
+
 /**
  * 询问用户是否确定发送**非纯文本内容**。
  * @returns 是否确定
  */
 function warnNonPlain(): Promise<boolean> {
   return new Promise((resolve) => {
-    Modal.warning({
+    Modal.info({
       title: '内容格式提示',
-      content: () => h(
-        'div',
-        null,
-        [
-          '消息内容解析为',
-          h(TypographyText, { bold: true }, ['非纯文本']),
-          '！',
-        ]
-      ),
+      content: () => (<div>
+        消息内容解析为
+        <TypographyText bold>非纯文本</TypographyText>
+        ！
+      </div>),
       hideCancel: false,
       onOk: () => resolve(true),
       onCancel: () => resolve(false),
@@ -62,28 +68,157 @@ function warnNonPlain(): Promise<boolean> {
   });
 }
 
+function warnSendAsOneByOne() {
+  return new Promise((resolve) => {
+    Modal.warning({
+      title: '确认发送',
+      content: () => (<div>
+        消息将会
+        <TypographyText bold>私信</TypographyText>
+        发送给所选频道的
+        <TypographyText bold>所有成员</TypographyText>
+        。
+        <br />
+        发送后暂不支持撤回，请确认操作！
+      </div>),
+      maskClosable: false,
+      hideCancel: false,
+      okText: '确认操作',
+      okButtonProps: {
+        status: 'danger',
+      },
+      onOk: () => resolve(true),
+      onCancel: () => resolve(false),
+    });
+  });
+}
+
+const canceled = ref(false);
+const percent = ref(0);
+/**
+ * 发送消息。
+ * @param chat 目标聊天
+ */
+async function send(chat: bigint) {
+  await bot.sendMessage({
+    chat,
+    text: input.content,
+    description: messageDescription.value,
+  });
+}
+/**
+ * 获取所选的频道中的用户。
+ * @returns 用户 Map
+ */
+async function getUsers() {
+  const users = new Map<bigint, null>();
+  // 分页大小
+  const step = 20;
+  for (let i = 0; i < input.targets.length; ++i) {
+    if (canceled.value) return;
+    const { guild, chat } = input.targets[i];
+    if (!guild) continue; // 非频道，不处理
+    let start = 1, end = step, now: bigint[];
+    // 累计获取为空次数
+    let lastUser: bigint = 0n;
+    // 退出循环条件：本次轮询中出现了重复值
+    // 原理：如果超出范围，服务器不会报错，会返回最近的长度相同的范围，也就是会取到一批重复的值
+    while (true) {
+      now = await bot.getChannelMembers(guild, chat, {
+        start,
+        end,
+      });
+      // 已经重复，视为超出范围，退出循环
+      if (now.length && now[now.length - 1] === lastUser) {
+        break;
+      }
+      // 逐个放入用户表，Map 会自动去重
+      for (const item of now) {
+        users.set(item, null);
+      }
+      // 下一页
+      lastUser = now[now.length - 1];
+      start += step;
+      end += step;
+    }
+    percent.value = i / input.targets.length;
+  }
+  return users;
+}
+async function sendAsOneByOne() {
+  const currentStep = ref(1);
+  const percent = ref(0);
+  const status = ref('process' as 'error' | 'finish' | 'process');
+  Modal.open({
+    title: '正在处理',
+    content: () => (<div>
+      <Steps current={currentStep.value} status={status.value}>
+        <Step>
+          获取成员列表
+        </Step>
+        <Step>发送消息</Step>
+      </Steps>
+      <Progress
+        style={{
+          justifyContent: 'center',
+          display: 'flex',
+        }}
+        type='circle'
+        size='large'
+        percent={percent.value}
+      />
+      <TypographyParagraph>
+        请勿更换网络或关闭标签页。
+      </TypographyParagraph>
+    </div>),
+    onCancel: () => {
+      Message.success({
+        content: '操作已手动中断',
+      });
+      canceled.value = true;
+    },
+  });
+  // 存在则标记为 null
+  const users = await getUsers();
+  if (!users) return; // 操作取消
+  currentStep.value = 2;
+  let finished = 0;
+  for (const [ user ] of users) {
+    if (canceled.value) return;
+    await send(await bot.getPrivateChat(user));
+    ++finished;
+    percent.value = finished / users.size;
+  }
+  status.value = 'finish';
+}
+
 async function onSubmit() {
+  let targets = input.targets;
   let json = undefined;
+  messageDescription.value = input.content;
   try { // 判断是否非纯文本
     json = JSON.parse(input.content);
   } catch {}
   if (json !== undefined) { // 非纯文本
     if (!await warnNonPlain()) return; // 用户取消操作
+    messageDescription.value = json.title; // 设置简介为富文本标题
+  }
+  if (input.sendAsOneByOne) {
+    if(!await warnSendAsOneByOne()) return;
+    await sendAsOneByOne();
+    return;
   }
   status.value = 'loading';
   try {
-    for (const chat of input.targets) { // 逐个发送
-      await bot.sendMessage({
-        chat,
-        text: input.content,
-        description: input.content,
-      });
+    for (const chat of targets) { // 逐个发送
+      await send(chat.chat);
     }
     Message.success({
       content: '发送成功',
       duration: 2500,
     });
   } catch (err) {
+    console.error(err);
     Message.error({
       content: '发送失败',
       duration: 6000,
@@ -110,7 +245,10 @@ async function onSubmit() {
           minRows: 5,
         }' :max-length='10240' />
       </FormItem>
-      <FormItem>
+      <FormItem label='逐个通知成员' field='sendAsOneByOne' tooltip='类似服务器管家的“私信”功能'>
+        <Switch v-model='input.sendAsOneByOne' />
+      </FormItem>
+      <FormItem class='operations'>
         <Button type='primary' html-type='submit'>
           发送消息
         </Button>
@@ -127,5 +265,8 @@ async function onSubmit() {
 }
 .form {
   width: 100%;
+}
+.operations {
+  margin-top: 4px;
 }
 </style>
