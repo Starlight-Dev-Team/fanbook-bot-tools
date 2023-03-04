@@ -124,7 +124,6 @@ export function selectChannel(
             });
           }
         }
-        console.log(tableData);
         guildIdStatus.value = 'success';
       } catch { // 获取失败
         guildIdStatus.value = 'error';
