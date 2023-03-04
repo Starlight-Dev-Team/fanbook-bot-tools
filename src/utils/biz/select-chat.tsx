@@ -48,14 +48,19 @@ export interface SelectChatConfig {
   channelType?: ChannelType;
 }
 
+export interface SelectChatResponse {
+  type?: ChatType;
+  guild?: bigint;
+  chat: bigint[];
+}
+
 /**
  * 选择聊天。
  * @returns 选项信息
  */
-export async function selectChat(config: SelectChatConfig): Promise<{
-  /** 选择的聊天 ID 。 */
-  chat: bigint[];
-}> {
+export async function selectChat(
+  config: SelectChatConfig,
+): Promise<SelectChatResponse> {
   let {
     title,
     max,
@@ -75,20 +80,29 @@ export async function selectChat(config: SelectChatConfig): Promise<{
     });
   }
   switch (chatType) {
-    case ChatType.CHANNEL:
-      return await selectChannel({
+    case ChatType.CHANNEL: {
+      const res = await selectChannel({
         bot: config.bot,
         title,
         max,
         min,
         channelType,
       });
+      return {
+        type: ChatType.CHANNEL,
+        guild: res.guild,
+        chat: res.channel,
+      };
+    }
     case ChatType.PRIVATE: {
       const res = await selectPrivateChat({
         bot: config.bot,
         title,
       });
-      return res.chat ? { chat: [res.chat] } : { chat: [] };
+      return {
+        type: ChatType.PRIVATE,
+        chat: res.chat ? [res.chat] : [],
+      };
     }
     default:
       return { chat: [] };
