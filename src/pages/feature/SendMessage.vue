@@ -148,7 +148,8 @@ async function getUsers() {
 const finished = ref(0);
 const total = ref(0);
 watch(finished, (value) => {
-  percent.value = Math.round(value / total.value);
+  console.log('watched', finished.value, total.value);
+  percent.value = Math.round(value / total.value * 100) / 100;
   done.value = percent.value === 1;
 });
 async function sendAsOneByOne() {
@@ -164,7 +165,7 @@ async function sendAsOneByOne() {
   }
   const modal = Modal.open({
     title: '正在处理',
-    content: () => (<div>
+    content: () => (<>
       <Steps current={currentStep.value} status={status.value}>
         <Step>
           获取成员列表
@@ -188,12 +189,12 @@ async function sendAsOneByOne() {
       <TypographyParagraph>
         请勿更换网络或关闭标签页。
       </TypographyParagraph>
-    </div>),
+    </>),
     footer: () => (<Space>
       <Button type='secondary' onClick={onCancel}>取消</Button>
       <Button
         type='primary'
-        disabled={done.value}
+        disabled={!done.value}
         onClick={modal.close}
       >确定</Button>
     </Space>),
