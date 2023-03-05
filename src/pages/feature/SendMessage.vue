@@ -2,6 +2,7 @@
 import { reactive, ref, watch } from 'vue';
 
 import {
+  Alert,
   Button,
   Form,
   FormItem,
@@ -270,6 +271,11 @@ async function onSubmit() {
 </script>
 
 <template>
+  <div class='notification'>
+    <Alert type='warning' closable>
+      请自觉遵守 Fanbook 行为准则，杜绝违规推流！
+    </Alert>
+  </div>
   <Spin class='form-wrapper' :loading='status === "loading"' tip='正在执行'>
     <Form
       class='form'
@@ -299,6 +305,9 @@ async function onSubmit() {
 </template>
 
 <style scoped>
+.notification:has(*) {
+  margin-bottom: 12px;
+}
 .form-wrapper {
   display: block;
   width: 70%;
