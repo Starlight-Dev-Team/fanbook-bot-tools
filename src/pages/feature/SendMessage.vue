@@ -94,8 +94,9 @@ function warnSendAsOneByOne() {
   });
 }
 
-const done = ref(false);
-const percent = ref(0);
+const fetched = ref(0); // 获取到的成员数量
+const done = ref(false); // 是否结束
+const percent = ref(0); // 进度
 /**
  * 发送消息。
  * @param chat 目标聊天
@@ -137,6 +138,7 @@ async function getUsers() {
       for (const item of now) {
         users.set(item, null);
       }
+      fetched.value += now.length;
       // 下一页
       lastUser = now[now.length - 1];
       start += step;
@@ -146,10 +148,10 @@ async function getUsers() {
   return users;
 }
 const finished = ref(0);
+const failed = ref(0);
 const total = ref(0);
-watch(finished, (value) => {
-  console.log('watched', finished.value, total.value);
-  percent.value = Math.round(value / total.value * 100) / 100;
+watch([finished, failed, total], (value) => {
+  percent.value = Math.round((value[0] + value[1]) / value[2] * 100) / 100;
   done.value = percent.value === 1;
 });
 async function sendAsOneByOne() {
@@ -172,7 +174,7 @@ async function sendAsOneByOne() {
         </Step>
         <Step>发送消息</Step>
       </Steps>
-      <Progress
+      {currentStep.value === 2 && (<Progress
         style={{
           display: 'flex',
           marginTop: '12px',
@@ -182,10 +184,14 @@ async function sendAsOneByOne() {
         size='large'
         status={status.value === 'error' ? 'danger' : undefined}
         percent={percent.value}
-      />
-      <TypographyParagraph>
-        进度：{finished.value} / {total.value}
-      </TypographyParagraph>
+      />)}
+      {currentStep.value === 1 ? (<TypographyParagraph style={{
+        marginTop: '12px',
+      }}>
+        已取到{fetched.value}个成员信息……
+      </TypographyParagraph>) : (<TypographyParagraph>
+        进度：{finished.value + failed.value} / {total.value} ({failed.value} 失败)
+      </TypographyParagraph>)}
       <TypographyParagraph>
         请勿更换网络或关闭标签页。
       </TypographyParagraph>
@@ -207,7 +213,12 @@ async function sendAsOneByOne() {
     total.value = users.size;
     for (const [ user ] of users) {
       if (done.value) return;
-      await send(await bot.getPrivateChat(user));
+      try { // 单次错误保护
+        await send(await bot.getPrivateChat(user));
+      } catch {
+        ++failed.value;
+        continue;
+      }
       ++finished.value;
     }
     status.value = 'finish';
