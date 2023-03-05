@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { h, reactive, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 
 import {
   Button,
@@ -7,6 +7,7 @@ import {
   FormItem,
   Message,
   Modal,
+  Space,
   Spin,
   Step,
   Steps,
@@ -14,7 +15,7 @@ import {
   Progress,
   Textarea,
   TypographyText,
-TypographyParagraph,
+  TypographyParagraph,
 } from '@arco-design/web-vue';
 import type { FieldRule } from '@arco-design/web-vue';
 
@@ -93,7 +94,7 @@ function warnSendAsOneByOne() {
   });
 }
 
-const canceled = ref(false);
+const done = ref(false);
 const percent = ref(0);
 /**
  * 发送消息。
@@ -115,7 +116,7 @@ async function getUsers() {
   // 分页大小
   const step = 20;
   for (let i = 0; i < input.targets.length; ++i) {
-    if (canceled.value) return;
+    if (done.value) return;
     const { guild, chat } = input.targets[i];
     if (!guild) continue; // 非频道，不处理
     let start = 1, end = step, now: bigint[];
@@ -141,15 +142,27 @@ async function getUsers() {
       start += step;
       end += step;
     }
-    percent.value = i / input.targets.length;
   }
   return users;
 }
+const finished = ref(0);
+const total = ref(0);
+watch(finished, (value) => {
+  percent.value = Math.round(value / total.value);
+  done.value = percent.value === 1;
+});
 async function sendAsOneByOne() {
   const currentStep = ref(1);
-  const percent = ref(0);
   const status = ref('process' as 'error' | 'finish' | 'process');
-  Modal.open({
+  function onCancel() {
+    done.value = true;
+    status.value = 'error';
+    modal.close();
+    Message.success({
+      content: '操作已手动中断',
+    });
+  }
+  const modal = Modal.open({
     title: '正在处理',
     content: () => (<div>
       <Steps current={currentStep.value} status={status.value}>
@@ -160,36 +173,52 @@ async function sendAsOneByOne() {
       </Steps>
       <Progress
         style={{
-          justifyContent: 'center',
           display: 'flex',
+          marginTop: '12px',
+          justifyContent: 'center',
         }}
         type='circle'
         size='large'
+        status={status.value === 'error' ? 'danger' : undefined}
         percent={percent.value}
       />
+      <TypographyParagraph>
+        进度：{finished.value} / {total.value}
+      </TypographyParagraph>
       <TypographyParagraph>
         请勿更换网络或关闭标签页。
       </TypographyParagraph>
     </div>),
-    onCancel: () => {
-      Message.success({
-        content: '操作已手动中断',
-      });
-      canceled.value = true;
-    },
+    footer: () => (<Space>
+      <Button type='secondary' onClick={onCancel}>取消</Button>
+      <Button
+        type='primary'
+        disabled={done.value}
+        onClick={modal.close}
+      >确定</Button>
+    </Space>),
   });
-  // 存在则标记为 null
-  const users = await getUsers();
-  if (!users) return; // 操作取消
-  currentStep.value = 2;
-  let finished = 0;
-  for (const [ user ] of users) {
-    if (canceled.value) return;
-    await send(await bot.getPrivateChat(user));
-    ++finished;
-    percent.value = finished / users.size;
+  try {
+    // 存在则标记为 null
+    const users = await getUsers();
+    if (!users) return; // 操作取消
+    currentStep.value = 2;
+    total.value = users.size;
+    for (const [ user ] of users) {
+      if (done.value) return;
+      await send(await bot.getPrivateChat(user));
+      ++finished.value;
+    }
+    status.value = 'finish';
+    done.value = true;
+  } catch (err) {
+    status.value = 'error';
+    console.error(err);
+    Modal.error({
+      title: '错误',
+      content: String(err),
+    });
   }
-  status.value = 'finish';
 }
 
 async function onSubmit() {
