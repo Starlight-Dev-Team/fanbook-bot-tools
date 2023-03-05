@@ -71,7 +71,7 @@ function remove(index: number) {
     </Button>
     <Tag
       v-for='(chat, index) in input'
-      :key='String(chat)'
+      :key='String(chat.chat)'
       closable
       @close='() => remove(index)'
     >
