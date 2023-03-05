@@ -273,7 +273,7 @@ async function onSubmit() {
 <template>
   <div class='notification'>
     <Alert type='warning' closable>
-      请自觉遵守 Fanbook 行为准则，杜绝违规推流！
+      请自觉遵守 Fanbook 行为准则，杜绝违规引流！
     </Alert>
   </div>
   <Spin class='form-wrapper' :loading='status === "loading"' tip='正在执行'>
