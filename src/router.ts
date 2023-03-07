@@ -29,6 +29,11 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/feature/SendMessage.vue'),
         meta: { title: '发送消息' },
       },
+      {
+        path: 'set-credit',
+        component: () => import('@/pages/feature/SetCredit.vue'),
+        meta: { title: '设置荣誉卡槽' },
+      },
     ],
     meta: { needLogin: true },
   },
