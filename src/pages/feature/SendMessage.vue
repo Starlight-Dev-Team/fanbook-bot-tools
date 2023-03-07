@@ -21,6 +21,9 @@ import {
 import type { FieldRule } from '@arco-design/web-vue';
 
 import { Bot } from '@starlight-dev-team/fanbook-api-sdk';
+import type {
+  FanbookApiError,
+} from '@starlight-dev-team/fanbook-api-sdk/dist/util'
 
 import ChatSelector from '@/components/ChatSelector.vue';
 import type { SelectedChat } from '@/components/ChatSelector.vue';
@@ -33,8 +36,11 @@ interface Input {
   sendAsOneByOne: boolean;
 }
 const input = reactive({
-  targets: [],
-  content: '',
+  targets: [{
+    guild: 413157189666996224n,
+    chat: 472763441304948736n,
+  }],
+  content: 'content',
   sendAsOneByOne: false,
 } as Input);
 
@@ -261,8 +267,17 @@ async function onSubmit() {
     });
   } catch (err) {
     console.error(err);
+    let message = '发送失败';
+    if (err instanceof Error &&
+        err.message === 'Failed to call Fanbook OpenAPI') {
+      const data = ((err as FanbookApiError).response as any).data;
+      switch (data.error_code) {
+        case 1012:
+          message = '无权限发送此消息';
+      }
+    }
     Message.error({
-      content: '发送失败',
+      content: message,
       duration: 6000,
     });
   }
