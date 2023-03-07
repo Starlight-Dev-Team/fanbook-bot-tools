@@ -127,10 +127,10 @@ async function getUsers() {
     // 退出循环条件：本次轮询中出现了重复值
     // 原理：如果超出范围，服务器不会报错，会返回最近的长度相同的范围，也就是会取到一批重复的值
     while (true) {
-      now = await bot.getChannelMembers(guild, chat, {
+      now = await bot.getChannelMembers({guild, channel: chat, range: {
         start,
         end,
-      });
+      }});
       // 已经重复，视为超出范围，退出循环
       if (now.length && now[now.length - 1] === lastUser) {
         break;
@@ -215,7 +215,7 @@ async function sendAsOneByOne() {
     for (const [ user ] of users) {
       if (done.value) return;
       try { // 单次错误保护
-        await send(await bot.getPrivateChat(user));
+        await send(await bot.getPrivateChat({ target: user }));
       } catch {
         ++failed.value;
         continue;

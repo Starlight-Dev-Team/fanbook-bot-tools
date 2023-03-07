@@ -78,13 +78,13 @@ export function selectPrivateChat(
       userShortIdStatus.value = 'validating';
       let user: bigint;
       try { // 尝试获取用户 ID
-        user = await bot.getUserByShortId(guild, short);
+        user = await bot.getUserByShortId({ guild, id: short });
       } catch { // 获取用户 ID 失败
         userShortIdStatus.value = 'error';
         return;
       }
       try { // 尝试获取私聊 ID
-        result.value = await bot.getPrivateChat(user);
+        result.value = await bot.getPrivateChat({ target: user });
       } catch { // 获取私聊 ID 失败
         userShortIdStatus.value = 'error';
         return;
