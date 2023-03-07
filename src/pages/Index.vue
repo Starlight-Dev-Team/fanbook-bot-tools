@@ -2,10 +2,9 @@
 import { h } from 'vue';
 import type { VNode } from 'vue';
 
-import { Card, Col, Row, TypographyTitle } from '@arco-design/web-vue';
+import { Card, Row, TypographyTitle } from '@arco-design/web-vue';
 
-import Link from '@/components/Link.vue';
-import { IconMessage } from '@arco-design/web-vue/es/icon';
+import { IconMessage, IconStar } from '@arco-design/web-vue/es/icon';
 
 /** 功能卡片数据。 */
 export interface Feature {
@@ -28,13 +27,22 @@ const features: Array<{
   /** 分类下属功能卡片数据。 */
   children: Feature[];
 }> = [
-   {
+  {
     title: '机器人消息',
     icon: h(IconMessage),
     children: [{
       icon: h(IconMessage, { size: 36 }),
       content: '发送消息',
       link: 'feature/send-message',
+    }],
+  },
+  {
+    title: '荣誉卡槽',
+    icon: h(IconStar),
+    children: [{
+      icon: h(IconStar, { size: 36 }),
+      content: '设置荣誉',
+      link: 'feature/set-credit',
     }],
   },
 ];
@@ -75,6 +83,7 @@ const features: Array<{
 }
 .feature-box {
   width: 100%;
+  margin-bottom: 20px;
 }
 .feature-card {
   width: 96px;
