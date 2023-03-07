@@ -113,7 +113,7 @@ export function selectChannel(
       }
       guildIdStatus.value = 'validating';
       try { // 尝试获取频道列表
-        const res = await bot.getGuildChannels(id);
+        const res = await bot.getGuildChannels({ guild: id });
         // 获取成功，放到表中
         tableData.value = [];
         for (const item of res) {
