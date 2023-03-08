@@ -243,6 +243,7 @@ async function onSubmit() {
   messageDescription.value = input.content;
   try { // 判断是否非纯文本
     json = JSON.parse(input.content);
+    if (typeof json !== 'object') json = undefined; // 富文本一定是 Object 类型
   } catch {}
   if (json !== undefined) { // 非纯文本
     if (!await warnNonPlain()) return; // 用户取消操作
