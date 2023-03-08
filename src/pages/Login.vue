@@ -110,7 +110,7 @@ function onSubmit() {
   // 1s 后返回上一页并隐藏提示
   setTimeout(() => {
     router.back();
-    message.close(); // 隐藏消息
+    location.reload();
   }, 1000);
 }
 </script>
