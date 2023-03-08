@@ -2,19 +2,16 @@
 import { onBeforeMount, ref } from 'vue';
 
 import {
-  Avatar,
   Button,
   Doption,
   Dropdown,
   Dsubmenu,
   Message,
   PageHeader,
-  Skeleton,
-  SkeletonLine,
-  SkeletonShape,
   Space,
-  TypographyText,
 } from '@arco-design/web-vue';
+
+import { back } from '@/router';
 
 import { useAccountStore } from '@/stores/account';
 
@@ -23,7 +20,7 @@ import type { Profile } from '@starlight-dev-team/fanbook-api-sdk/dist/types';
 
 import { switchBot } from '@/utils/account';
 
-import BotInfo from './BotInfo.vue';
+import BotInfo from '@/components/BotInfo.vue';
 
 const accountStore = useAccountStore();
 
@@ -59,7 +56,7 @@ onBeforeMount(async () => {
   <PageHeader
     :title='$route.meta.title as string ?? defaultTitle'
     :show-back='$route.path !== "/"'
-    @back='$router.back'
+    @back='back'
   >
     <template #extra>
       <Dropdown v-if='activeProfile || loading' trigger='hover' position='br'>
