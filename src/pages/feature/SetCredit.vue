@@ -191,6 +191,9 @@ async function onSubmit() {
   width: 70%;
   margin: 0 auto;
 }
+body.mobile .form-wrapper {
+  width: 90vw;
+}
 .form {
   width: 100%;
 }

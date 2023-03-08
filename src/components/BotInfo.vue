@@ -1,7 +1,16 @@
 <script lang="ts" setup>
-import { Avatar, Skeleton, SkeletonLine, SkeletonShape, Space, TypographyText } from '@arco-design/web-vue';
+import {
+  Avatar,
+  Skeleton,
+  SkeletonLine,
+  SkeletonShape,
+  Space,
+  TypographyText,
+} from '@arco-design/web-vue';
 
 import type { Profile } from '@starlight-dev-team/fanbook-api-sdk/dist/types';
+
+import type { DeviceInjection } from '@/App.vue';
 
 export interface Props {
   /**
@@ -15,7 +24,7 @@ defineProps<Props>();
 </script>
 
 <template>
-  <Space>
+  <Space v-bind='$attrs'>
     <template v-if='!profile'>
       <Skeleton class='skeleton' animation>
         <SkeletonShape shape='circle' size='small' />
@@ -45,7 +54,7 @@ defineProps<Props>();
   width: 100px;
 }
 .bot-avatar {
-  display: inline;
+  display: inline-flex;
   background: none;
 }
 </style>

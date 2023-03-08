@@ -11,6 +11,9 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/about',
     component: () => import('@/pages/About.vue'),
+    meta: {
+      title: '声明',
+    },
   },
   {
     path: '/version',

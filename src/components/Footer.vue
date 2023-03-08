@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+import { inject } from 'vue';
+
 import {
   Divider,
-  Link as ALink,
   TypographyText,
 } from '@arco-design/web-vue';
 import Link from './Link.vue';
+import type { DeviceInjection } from '@/App.vue';
 
 export interface FooterItem {
   label: string;
@@ -23,6 +25,8 @@ const data: FooterItem[] = [{
   label: '版本信息',
   link: '/version',
 }];
+
+const $device = inject('device') as DeviceInjection;
 </script>
 
 <template>
@@ -36,10 +40,11 @@ const data: FooterItem[] = [{
   </TypographyText>
   <TypographyText>
     Released under
-    <ALink href='https://opensource.org/license/mit/' :hoverable='false'>
+    <Link to='https://opensource.org/license/mit/' :hoverable='false'>
       MIT License
-    </ALink>
-    ,
+    </Link>
+    <template v-if='$device === "desktop"'>,</template>
+    <template v-else><br /></template>
     Copyright &copy; 2023 星光工作室
   </TypographyText>
 </template>

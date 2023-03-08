@@ -62,7 +62,7 @@ onBeforeMount(async () => {
   >
     <template #extra>
       <Dropdown v-if='activeProfile || loading' trigger='hover' position='br'>
-        <BotInfo class='avatar' :profile='activeProfile' />
+        <BotInfo class='bot-avatar' :profile='activeProfile' />
         <template #content>
           <Dsubmenu trigger='hover'>
             <template #default>切换机器人</template>
@@ -91,14 +91,19 @@ onBeforeMount(async () => {
 </template>
 
 <style scoped>
-:deep(.arco-page-header-extra) {
+:deep() .arco-page-header-extra {
   overflow: visible;
   height: 30px;
 }
-:deep(.avatar) {
+:deep() .bot-avatar {
   margin-top: -5px;
 }
 .bot-list {
   line-height: unset;
+}
+body.mobile .bot-avatar:deep() .bot-avatar {
+  visibility: hidden;
+  width: 0;
+  height: 100%;
 }
 </style>

@@ -36,11 +36,8 @@ interface Input {
   sendAsOneByOne: boolean;
 }
 const input = reactive({
-  targets: [{
-    guild: 413157189666996224n,
-    chat: 472763441304948736n,
-  }],
-  content: 'content',
+  targets: [],
+  content: '',
   sendAsOneByOne: false,
 } as Input);
 
@@ -327,6 +324,9 @@ async function onSubmit() {
   display: block;
   width: 70%;
   margin: 0 auto;
+}
+body.mobile .form-wrapper {
+  width: 90vw;
 }
 .form {
   width: 100%;

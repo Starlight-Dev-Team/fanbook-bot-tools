@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, ref, shallowRef, watch } from 'vue';
+import { reactive, ref, inject, shallowRef, watch } from 'vue';
 
 import {
   Avatar,
@@ -9,6 +9,7 @@ import {
   Input,
   Message,
   Space,
+  Textarea,
 } from '@arco-design/web-vue';
 import {
   IconMore,
@@ -21,9 +22,13 @@ import router from '@/router';
 
 import { addBot, hasBot } from '@/utils/account';
 
+import type { DeviceInjection } from '@/App.vue';
+
 interface FormInput {
   token?: string;
 }
+
+const $device = inject('device') as DeviceInjection;
 
 const form = reactive({} as FormInput);
 
@@ -126,9 +131,17 @@ function onSubmit() {
   >
     <FormItem label='机器人 Token' :validate-status='tokenValidate' feedback>
       <Input
+        v-if='$device === "desktop"'
         autocomplete='current-password'
         v-model='form.token'
         :min-length='TOKEN_LENGTH'
+        :max-length='TOKEN_LENGTH'
+        @change='onTokenInput'
+      />
+      <Textarea
+        v-else
+        autocomplete='current-password'
+        v-model='form.token'
         :max-length='TOKEN_LENGTH'
         @change='onTokenInput'
       />
@@ -154,6 +167,9 @@ function onSubmit() {
 .form {
   width: 70vw;
   margin: 0 auto;
+}
+body.mobile .form {
+  width: 90vw;
 }
 .avatar {
   background: none;
