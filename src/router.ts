@@ -2,6 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 import { useAccountStore } from './stores/account';
 import { Message } from '@arco-design/web-vue';
+import { useMainStore } from './stores/main';
+
+export const history = createWebHistory();
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -47,7 +50,7 @@ export const routes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history,
   routes,
 });
 
@@ -64,6 +67,22 @@ router.beforeEach((to, from, next) => {
   }
   next();
 });
+
+router.afterEach(() => {
+  if (useMainStore().needReload) {
+    useMainStore().needReload = false;
+    location.reload();
+  }
+});
+
+/** 回到上一页。 */
+export function back(): void {
+  if (history.state.back === null) { // 没有上一页
+    router.replace('/');
+  } else {
+    router.back();
+  }
+}
 
 export { router };
 

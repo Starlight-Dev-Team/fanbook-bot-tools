@@ -1,10 +1,8 @@
 import { ref } from 'vue';
 
-import { createPinia, defineStore } from 'pinia';
+import { defineStore } from 'pinia';
 
 import { getBots } from '@/utils/account';
-
-export const pinia = createPinia();
 
 export const useAccountStore = defineStore('account', () => {
   const botTokens = ref(getBots());

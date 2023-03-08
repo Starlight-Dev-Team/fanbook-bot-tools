@@ -39,6 +39,7 @@ function switchToBot(token: string) {
     duration: NaN,
   });
   switchBot(token);
+  location.reload();
 }
 
 const loading = ref(true);
