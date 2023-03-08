@@ -19,7 +19,13 @@ onMounted(async () => {
 
 <template>
   <Spin class='form-wrapper' :loading='!version' tip='正在加载'>
-    <Form v-if='version' class='form' :model='version' :disabled='true'>
+    <Form
+      v-if='version'
+      class='form'
+      :model='version'
+      :disabled='true'
+      auto-label-width
+    >
       <FormItem label='版本号'>
         {{ version.id }}
         <Tag v-if='version.verified' class='tag' color='green'>
@@ -50,10 +56,13 @@ onMounted(async () => {
 
 <style scoped>
 .form-wrapper {
-  position: initial;
+  display: block;
   width: 70%;
   height: 100%;
   margin: 0 auto;
+}
+body.mobile .form-wrapper {
+  width: 90%;
 }
 .form-wrapper:deep() .arco-spin-mask {
   position: initial;

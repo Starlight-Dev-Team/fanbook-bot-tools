@@ -1,14 +1,20 @@
 <script lang="ts" setup>
+import { inject } from 'vue';
+
 import {
   TypographyTitle,
   TypographyParagraph,
   Link,
 } from '@arco-design/web-vue';
+
+import type { DeviceInjection } from '@/App.vue';
+
+const $device = inject('device') as DeviceInjection;
 </script>
 
 <template>
   <article>
-    <TypographyTitle>声明</TypographyTitle>
+    <TypographyTitle v-if='$device === "desktop"'>声明</TypographyTitle>
     <TypographyParagraph>
       本项目非 Fanbook 官方项目，是由星光工作室开发组维护的
       <Link
@@ -33,6 +39,12 @@ import {
 article {
   width: 70vw;
   margin: 0 auto;
+}
+article > div.arco-typography {
+  text-indent: 2em;
+}
+body.mobile article {
+  width: 90vw;
 }
 h1 {
   margin-top: 0;
