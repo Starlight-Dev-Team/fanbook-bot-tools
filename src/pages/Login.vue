@@ -18,9 +18,11 @@ import {
 
 import { Bot } from '@starlight-dev-team/fanbook-api-sdk';
 
-import router from '@/router';
+import { back } from '@/router';
 
 import { addBot, hasBot } from '@/utils/account';
+
+import { useMainStore } from '@/stores/main';
 
 import type { DeviceInjection } from '@/App.vue';
 
@@ -102,16 +104,15 @@ function onSubmit() {
   }
   // 检测通过
   addBot(form.token as string);
-  const message = Message.success({
+  Message.success({
     content: '添加成功',
     duration: 1000,
     closable: true,
+    onClose() {
+      useMainStore().needReload = true;
+      back();
+    }
   });
-  // 1s 后返回上一页并隐藏提示
-  setTimeout(() => {
-    router.back();
-    location.reload();
-  }, 1000);
 }
 </script>
 
