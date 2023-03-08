@@ -69,10 +69,24 @@ function bigintValidator(value: string, cb: (error?: string) => void) {
 
 async function onSubmit() {
   status.value = 'loading';
+  let user: bigint;
+  try {
+    user = await bot.getUserByShortId({
+      guild: BigInt(input.guild),
+      id: Number(input.user),
+    });
+  } catch (err) {
+    console.error(err);
+    Message.error({
+      content: '请检查 用户# 是否正确',
+      duration: 3000,
+    });
+    return;
+  }
   try {
     await bot.setGuildUserCredit({
       guild: BigInt(input.guild),
-      user: BigInt(input.user),
+      user,
       credit: input.credit,
     });
     Message.success({
@@ -104,8 +118,14 @@ async function onSubmit() {
       }]'>
         <Input v-model='input.guild' />
       </FormItem>
-      <FormItem label='用户 ID' field='user' :rules='REQUEIRE_RULE'>
-        <Input v-model='input.user' />
+      <FormItem label='用户 #' field='user' :rules='[REQUEIRE_RULE, {
+        validator(value, cb) {
+          cb((!Number.isNaN(Number(value)) ? undefined : "错误的 Fanbook #"));
+        },
+      }]' tooltip='显示在个人主页'>
+        <Input v-model='input.user'>
+          <template #prefix>#</template>
+        </Input>
       </FormItem>
       <FormItem
         label='自定义 ID'
