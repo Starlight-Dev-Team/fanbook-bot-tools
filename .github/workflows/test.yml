@@ -18,7 +18,7 @@ jobs:
       - name: 安装依赖
         run: |
           yarn
-          yarn pre-lint
+          yarn prelint
       - name: 运行测试命令
         run: |
           yarn lint

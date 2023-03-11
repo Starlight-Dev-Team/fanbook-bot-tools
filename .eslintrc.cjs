@@ -19,6 +19,7 @@ module.exports = {
     'promise/param-names': [0],
     'no-return-assign': [0],
     '@typescript-eslint/comma-dangle': [2, 'always-multiline'],
+    '@typescript-eslint/explicit-function-return-type': [0],
     '@typescript-eslint/object-curly-spacing': [2, 'always'],
     '@typescript-eslint/member-delimiter-style': [2, {
       'multiline': { 'delimiter': 'semi', 'requireLast': true },
