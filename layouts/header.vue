@@ -20,8 +20,6 @@ import type { Profile } from '@starlight-dev-team/fanbook-api-sdk/dist/types';
 
 import { switchBot } from '~~/utils/account';
 
-const accountStore = useAccountStore();
-
 const defaultTitle = 'Fanbook 机器人工具';
 
 let botsProfile: Record<string, Profile> = {};
@@ -41,11 +39,8 @@ const loading = ref(true);
 
 onBeforeMount(async () => {
   const store = useAccountStore();
-  for (const token of store.botTokens) {
-    const bot = new Bot(token);
-    botsProfile[token] = await bot.getProfile();
-  }
-  activeProfile.value = botsProfile[accountStore.activeBotToken ?? ''];
+  botsProfile = store.botProfiles;
+  activeProfile.value = botsProfile[store.activeBotToken ?? ''];
   loading.value = false;
 });
 </script>
