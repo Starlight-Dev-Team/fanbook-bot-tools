@@ -57,31 +57,37 @@ onBeforeMount(async () => {
     @back='back'
   >
     <template #extra>
-      <Dropdown v-if='activeProfile || loading' trigger='hover' position='br'>
-        <BotInfo class='bot-avatar' :profile='activeProfile' />
-        <template #content>
-          <Dsubmenu trigger='hover'>
-            <template #default>切换机器人</template>
-            <template #content>
-              <Doption
-                v-for='(profile, token) in botsProfile'
-                class='bot-list'
-                @click='() => switchToBot(token)'
-              >
-                <BotInfo :profile='profile' />
-              </Doption>
-            </template>
-          </Dsubmenu>
-          <Doption @click='() => $router.push("/login")'>
-            添加机器人
-          </Doption>
-        </template>
-      </Dropdown>
-      <Space v-else>
-        <Button type='primary' @click='() => $router.push("/login")'>
-          登录
-        </Button>
-      </Space>
+      <ClientOnly>
+        <Dropdown
+          v-if='activeProfile || loading'
+          trigger='hover'
+          position='br'
+        >
+          <BotInfo class='bot-avatar' :profile='activeProfile' />
+          <template #content>
+            <Dsubmenu trigger='hover'>
+              <template #default>切换机器人</template>
+              <template #content>
+                <Doption
+                  v-for='(profile, token) in botsProfile'
+                  class='bot-list'
+                  @click='() => switchToBot(token)'
+                >
+                  <BotInfo :profile='profile' />
+                </Doption>
+              </template>
+            </Dsubmenu>
+            <Doption @click='() => $router.push("/login")'>
+              添加机器人
+            </Doption>
+          </template>
+        </Dropdown>
+        <Space v-else>
+          <Button type='primary' @click='() => $router.push("/login")'>
+            登录
+          </Button>
+        </Space>
+      </ClientOnly>
     </template>
   </PageHeader>
 </template>

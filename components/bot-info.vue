@@ -25,7 +25,7 @@ defineProps<Props>();
   <Space v-bind='$attrs'>
     <template v-if='!profile'>
       <Skeleton class='skeleton' animation>
-        <SkeletonShape shape='circle' size='small' />
+        <SkeletonShape class='bot-avatar' shape='circle' size='small' />
         <SkeletonLine :rows='1' />
       </Skeleton>
     </template>

@@ -1,12 +1,12 @@
 export type DeviceType = 'desktop' | 'mobile';
 
 export default defineNuxtPlugin(() => {
-  let device: DeviceType = 'desktop';
-  const mobileRegexp =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/;
-  if (mobileRegexp.test(navigator.userAgent)) {
-    device = 'mobile';
-  }
+  const device: DeviceType = (() => {
+    return (
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
+    ).test(navigator.userAgent) ? 'mobile' : 'desktop';
+  })();
+  document.body.classList.add(device);
   return {
     provide: { device },
   };
