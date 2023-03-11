@@ -19,8 +19,8 @@ jobs:
           fetch-depth: 0
       - name: 修改 Git 用户设置
         run: |
-          git config --global user.email "kaikai_miniworld@outlook.com"
-          git config --global user.name "kaikaibenkai"
+          git config --global user.email "noreply@github.com"
+          git config --global user.name "Github Actions"
       - name: 拉取代码
         run: |
           git pull -f origin main
@@ -35,7 +35,7 @@ jobs:
         run: |
           npm install -g yarn
           yarn
-      - name: 构建静态文档
+      - name: 构建静态站点
         run: |
           yarn build
           git add dist -f
