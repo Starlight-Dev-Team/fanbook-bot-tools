@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'src/**'
-      - 'public/**'
 jobs:
   build:
     name: 构建
@@ -38,7 +35,7 @@ jobs:
       - name: 构建静态站点
         run: |
           yarn build
-          git add .output/public -f
+          git add dist -f
           git commit -m "部署"
       - name: 推送物料
         run: git push origin gh-pages --set-upstream
@@ -69,6 +66,6 @@ jobs:
       - name: 上传物料
         uses: actions/upload-pages-artifact@v1
         with:
-          path: .output/public
+          path: dist
       - name: 发布线上
         uses: actions/deploy-pages@v1
