@@ -38,7 +38,7 @@ jobs:
       - name: 构建静态站点
         run: |
           yarn build
-          git add dist -f
+          git add .output/public -f
           git commit -m "部署"
       - name: 推送物料
         run: git push origin gh-pages --set-upstream
