@@ -4,11 +4,17 @@
   "scripts": {
     "build": "sh scripts/build.sh",
     "start": "sh scripts/start.sh",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "prelint": "sh scripts/pre-lint.sh",
+    "lint": "sh scripts/lint.sh",
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "eslint": "^8.36.0",
+    "eslint-config-standard-with-typescript": "^34.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
     "nuxt": "^3.2.3"
   },
   "dependencies": {
