@@ -9,5 +9,5 @@ export default defineNuxtPlugin(() => {
   }
   return {
     provide: { device },
-  }
+  };
 });
