@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'src/**'
-      - 'public/**'
 jobs:
   build:
     name: 构建
