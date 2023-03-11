@@ -1,2 +1,4 @@
+rm -rf .output;
 nuxt generate;
-cp -rl .output/public dist;
+rm -rf dist;
+cp -r .output/public dist;
