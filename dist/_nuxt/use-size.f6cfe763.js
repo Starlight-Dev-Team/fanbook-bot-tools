@@ -1,0 +1,1 @@
+import{O as i,at as m,f as c}from"./entry.a3169e62.js";const l=Symbol("ArcoFormItemContext"),u=Symbol("ArcoFormContext"),d=(o,{defaultValue:r="medium"}={})=>{const e=i(m,void 0);return{mergedSize:c(()=>{var n,t;return(t=(n=o==null?void 0:o.value)!=null?n:e==null?void 0:e.size)!=null?t:r})}};export{l as a,u as f,d as u};
