@@ -103,7 +103,8 @@ onBeforeMount(async () => {
 .bot-list {
   line-height: unset;
 }
-body.mobile .bot-avatar:deep() .bot-avatar {
+body.mobile .bot-avatar:deep() .bot-avatar,
+body.mobile .bot-avatar:deep() .bot-avatar-loading {
   visibility: hidden;
   width: 0;
   height: 100%;
