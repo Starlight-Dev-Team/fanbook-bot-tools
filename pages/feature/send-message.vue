@@ -286,8 +286,12 @@ async function onSubmit() {
 
 <template>
   <div class='notification'>
-    <Alert type='warning' closable>
-      请自觉遵守 Fanbook 行为准则，杜绝违规引流！
+    <Alert type='info' closable>
+      根据 Fanbook 最新规定，发送消息需要
+      <AppLink to='https://wenjuan.feishu.cn/m/cfm?t=sSXCQ3hM0HKi-iuth' icon>
+        申请白名单
+      </AppLink>
+      。
     </Alert>
   </div>
   <Spin class='form-wrapper' :loading='status === "loading"' tip='正在执行'>
