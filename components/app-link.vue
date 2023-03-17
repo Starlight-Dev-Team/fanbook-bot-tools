@@ -3,8 +3,8 @@ import { Link } from '@arco-design/web-vue';
 
 export interface Props {
   to: string;
-  hoverable: boolean;
-  icon: boolean;
+  hoverable?: boolean;
+  icon?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   hoverable: true,
