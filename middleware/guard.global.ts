@@ -42,7 +42,7 @@ export function checkReload(): boolean {
 
 export default defineNuxtRouteMiddleware(() => {
   const router = useRouter();
-  router.beforeEach(async (to, from, next) => {
+  router.beforeEach(async(to, from, next) => {
     if (!await checkAuth(to)) next();
   });
   router.afterEach((to) => {
