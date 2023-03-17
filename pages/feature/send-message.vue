@@ -29,6 +29,7 @@ import type { FieldRule } from '@arco-design/web-vue';
 
 definePageMeta({
   title: '发送消息',
+  requiredAuth: true,
 });
 
 interface Input {

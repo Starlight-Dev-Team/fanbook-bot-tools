@@ -5,6 +5,9 @@ import {
   LayoutHeader,
 } from '@arco-design/web-vue';
 import '@arco-design/web-vue/dist/arco.css';
+
+import { checkAuth } from './middleware/guard.global';
+checkAuth(useRoute());
 </script>
 
 <template>

@@ -110,3 +110,8 @@ export function switchBot(token: string): void {
     location.reload();
   }
 }
+
+/** 获取是否已登录。 */
+export function isAuthorized(): boolean {
+  return !!getBots().length;
+}
