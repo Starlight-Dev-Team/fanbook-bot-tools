@@ -25,6 +25,7 @@ import type { FieldRule } from '@arco-design/web-vue';
 
 definePageMeta({
   title: '设置荣誉卡槽',
+  requiredAuth: true,
 });
 
 interface Input {
