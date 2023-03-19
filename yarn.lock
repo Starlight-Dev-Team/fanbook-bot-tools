@@ -813,9 +813,9 @@
   integrity sha512-N9vXqLP3eRL8BqSy8yn4Y98cZI2pZ8fyuHx6lKjiG2WABpT2l01TXdzq5Ma2ZUBzfB7tx5dXVhge8X9u0S70ZQ==
 
 "@eslint-community/eslint-utils@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.npmjs.org/@eslint-community/eslint-utils/-/eslint-utils-4.2.0.tgz#a831e6e468b4b2b5ae42bf658bea015bf10bc518"
-  integrity sha512-gB8T4H4DEfX2IV9zGDJPOBgP1e/DbfCPDTtEqUMckpvzS1OYtva8JdFYBqMwYk7xAQ429WGF/UPqn8uQ//h2vQ==
+  version "4.3.0"
+  resolved "https://registry.npmjs.org/@eslint-community/eslint-utils/-/eslint-utils-4.3.0.tgz#a556790523a351b4e47e9d385f47265eaaf9780a"
+  integrity sha512-v3oplH6FYCULtFuCeqyuTd9D2WKO937Dxdq+GmHOLL72TTRriLxz2VLlNfkZRsvj6PKnOPAtuT6dwrs/pA5DvA==
   dependencies:
     eslint-visitor-keys "^3.3.0"
 
@@ -1190,10 +1190,10 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
-"@starlight-dev-team/fanbook-api-sdk@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.npmjs.org/@starlight-dev-team/fanbook-api-sdk/-/fanbook-api-sdk-0.5.0.tgz#0364486378d7f4548335511159c3ec16f4053bc9"
-  integrity sha512-+I7Fdil3Ze93ahkhJDXX+x5KcdIy6NKjGrf/tRWSD7SOIIdE2zK/qarEYUGGss8a3PBN51hKTo4HmCDT/TwdrA==
+"@starlight-dev-team/fanbook-api-sdk@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.npmjs.org/@starlight-dev-team/fanbook-api-sdk/-/fanbook-api-sdk-0.6.1.tgz#b1590f5c8bf6cb8c61508449e425388536b84dff"
+  integrity sha512-OD9K5AJiV2irpdMJddXB5GWWq5qoBwrIWGNsiW7lEtviS0HYJ1+/CoKBMALANzly5gv/3EYOVN2vbP+DRVYjtw==
   dependencies:
     "@types/json-bigint" "^1.0.1"
     "@types/qs" "^6.9.7"
@@ -5790,9 +5790,9 @@ typed-array-length@^1.0.4:
     is-typed-array "^1.1.9"
 
 typescript@*:
-  version "4.9.5"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
-  integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
+  version "5.0.2"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-5.0.2.tgz#891e1a90c5189d8506af64b9ef929fca99ba1ee5"
+  integrity sha512-wVORMBGO/FAs/++blGNeAVdbNKtIh1rbBL2EyQ1+J9lClJ93KiiKe8PmFIVdXhHcyv44SL9oglmfeSsndo0jRw==
 
 ufo@^1.0.0, ufo@^1.1.0, ufo@^1.1.1:
   version "1.1.1"
