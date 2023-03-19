@@ -1,7 +1,11 @@
-<script lang="ts" setup>
+<script lang="tsx" setup>
 import { Card, Row, TypographyTitle } from '@arco-design/web-vue';
 
-import { IconMessage, IconStar } from '@arco-design/web-vue/es/icon';
+import {
+  IconDelete,
+  IconMessage,
+  IconStar,
+} from '@arco-design/web-vue/es/icon';
 
 /** 功能卡片数据。 */
 export interface Feature {
@@ -26,20 +30,24 @@ const features: Array<{
 }> = [
   {
     title: '机器人消息',
-    icon: h(IconMessage),
+    icon: <IconMessage />,
     children: [{
-      icon: h(IconMessage, { size: 36 }),
+      icon: <IconMessage size={36} />,
       content: '发送消息',
       link: 'feature/send-message',
     }],
   },
   {
     title: '荣誉卡槽',
-    icon: h(IconStar),
+    icon: <IconStar />,
     children: [{
-      icon: h(IconStar, { size: 36 }),
+      icon: <IconStar size={36} />,
       content: '设置荣誉',
       link: 'feature/set-credit',
+    }, {
+      icon: <IconDelete size={36} />,
+      content: '删除荣誉',
+      link: 'feature/delete-credit',
     }],
   },
 ];
@@ -49,12 +57,14 @@ const features: Array<{
   <div class='features'>
     <Row v-for='row in features'>
       <Card
-        v-for='item in row.children'
         class='feature-box'
         :title='row.title'
-        @click='() => $router.push(item.link)'
       >
-        <Card class='feature-card'>
+        <Card
+          v-for='item in row.children'
+          class='feature-card' 
+          @click='() => $router.push(item.link)'
+        >
           <span>
             <component :is='item.icon' />
           </span>
@@ -82,9 +92,14 @@ const features: Array<{
   width: 100%;
   margin-bottom: 20px;
 }
+.feature-box:deep() .arco-card-body {
+  display: flex;
+  flex-wrap: nowrap;
+}
 .feature-card {
   width: 96px;
   height: 96px;
+  margin-right: 20px;
   cursor: pointer;
 }
 .feature-card:deep() > .arco-card-body {
