@@ -3,6 +3,7 @@ import { Card, Row, TypographyTitle } from '@arco-design/web-vue';
 
 import {
   IconDelete,
+  IconList,
   IconMessage,
   IconStar,
 } from '@arco-design/web-vue/es/icon';
@@ -48,6 +49,10 @@ const features: Array<{
       icon: <IconDelete size={36} />,
       content: '删除荣誉',
       link: 'feature/delete-credit',
+    }, {
+      icon: <IconList size={36} />,
+      content: '荣誉列表',
+      link: 'feature/get-user-credit',
     }],
   },
 ];
