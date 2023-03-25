@@ -24,6 +24,8 @@ import {
   Textarea,
   TypographyText,
   TypographyParagraph,
+  List,
+  ListItem,
 } from '@arco-design/web-vue';
 import type { FieldRule } from '@arco-design/web-vue';
 
@@ -108,7 +110,7 @@ const percent = ref(0); // 进度
  * @param chat 目标聊天
  */
 async function send(chat: bigint) {
-  await bot.sendMessage({
+  return await bot.sendMessage({
     chat,
     text: input.content,
     description: messageDescription.value,
@@ -239,6 +241,23 @@ async function sendAsOneByOne() {
   }
 }
 
+/** 错误转为错误信息。 */
+function errorToMessage(error: unknown): string {
+  let message = String(error);
+  if (error instanceof Error &&
+      error.message === 'Failed to call Fanbook OpenAPI') {
+    const data = ((error as FanbookApiError).response as any).data;
+    switch (data.error_code) {
+      case 0:
+        message = '此机器人不支持发送消息';
+      case 1012:
+        message = '无权限发送此消息';
+      case 1038:
+        message = '机器人已被目标用户屏蔽';
+    }
+  }
+  return message;
+}
 async function onSubmit() {
   let targets = input.targets;
   let json = undefined;
@@ -257,28 +276,41 @@ async function onSubmit() {
     return;
   }
   status.value = 'loading';
-  try {
-    for (const chat of targets) { // 逐个发送
-      await send(chat.chat);
+  const info: bigint[] = [];
+  const errors: unknown[] = [];
+  for (const chat of targets) { // 逐个发送
+    try {
+      info.push(await send(chat.chat));
+    } catch (err) {
+      errors.push(err);
     }
-    Message.success({
-      content: '发送成功',
-      duration: 2500,
+  }
+  const single = targets.length === 1;
+  if (!info.length) {
+    Modal.error({
+      title: '发送失败',
+      content: () => (<div>
+        {
+          single ?
+          (<TypographyParagraph>{ errorToMessage(errors[0]) }</TypographyParagraph>) :
+          (<TypographyParagraph>{ errors } 条消息全部发送失败！</TypographyParagraph>)
+        }
+      </div>),
     });
-  } catch (err) {
-    console.error(err);
-    let message = '发送失败';
-    if (err instanceof Error &&
-        err.message === 'Failed to call Fanbook OpenAPI') {
-      const data = ((err as FanbookApiError).response as any).data;
-      switch (data.error_code) {
-        case 1012:
-          message = '无权限发送此消息';
-      }
-    }
-    Message.error({
-      content: message,
-      duration: 6000,
+  } else {
+    Modal.success({
+      title: '发送成功' + (single ? '' : ` ${info.length}/${targets.length}`),
+      content: () => (single ?
+        (<TypographyParagraph>消息 ID ：{info[0]}</TypographyParagraph>) :
+        (<div>
+          <TypographyParagraph>消息 ID 列表：</TypographyParagraph>
+          <List data={info} v-slots={{
+            item: (item: { index: number; item: bigint }) => (
+              <ListItem>{item.item}</ListItem>
+            )}}
+          />
+        </div>)
+      ),
     });
   }
   status.value = 'default';
