@@ -29,13 +29,11 @@ definePageMeta({
 });
 
 interface Input {
-  guild: string;
-  user: string;
+  guild?: bigint;
+  user?: bigint;
   card: string;
 }
 const input = reactive({
-  guild: '',
-  user: '',
   card: '',
 } as Input);
 
@@ -49,31 +47,13 @@ const status = ref('default' as Status);
 
 const bot = new Bot(useAccountStore().activeBotToken as string);
 
-function bigintValidator(value: string, cb: (error?: string) => void) {
-  if (tryBigintify(value) === undefined) cb('数据填写错误');
-  else cb(undefined);
-}
-
 async function onSubmit() {
   status.value = 'loading';
   let user: bigint;
   try {
-    user = await bot.getUserByShortId({
-      guild: BigInt(input.guild),
-      id: Number(input.user),
-    });
-  } catch (err) {
-    console.error(err);
-    Message.error({
-      content: '请检查 用户# 是否正确',
-      duration: 3000,
-    });
-    return;
-  }
-  try {
     await bot.deleteGuildUserCredit({
-      guild: BigInt(input.guild),
-      user,
+      guild: input.guild as bigint,
+      user: input.user as bigint,
       card: input.card,
     });
     Message.success({
@@ -100,20 +80,17 @@ async function onSubmit() {
       auto-label-width
       @submit-success='onSubmit'
     >
-      <FormItem label='服务器 ID' field='guild' :rules='[REQUEIRE_RULE, {
-        validator: bigintValidator,
-      }]'>
-        <Input v-model='input.guild' />
-      </FormItem>
-      <FormItem label='用户 #' field='user' :rules='[REQUEIRE_RULE, {
-        validator(value, cb) {
-          cb((!Number.isNaN(Number(value)) ? undefined : "错误的 Fanbook #"));
-        },
-      }]' tooltip='显示在个人主页'>
-        <Input v-model='input.user'>
-          <template #prefix>#</template>
-        </Input>
-      </FormItem>
+      <GuildInputForm
+        v-model='input.guild'
+        field='guild'
+        required
+      />
+      <UserInputForm
+        v-model='input.user'
+        :guild='input.guild'
+        field='user'
+        required
+      />
       <FormItem
         label='自定义 ID'
         field='card'

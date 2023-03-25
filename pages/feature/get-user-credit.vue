@@ -8,7 +8,6 @@ import {
   Button,
   Form,
   FormItem,
-  Input,
   Message,
   Spin,
   Modal,
@@ -24,13 +23,10 @@ definePageMeta({
 });
 
 interface Input {
-  guild: string;
-  user: string;
+  guild?: bigint;
+  user?: bigint;
 }
-const input = reactive({
-  guild: '',
-  user: '',
-} as Input);
+const input = reactive({} as Input);
 
 const REQUEIRE_RULE: FieldRule = {
   required: true,
@@ -49,24 +45,10 @@ function bigintValidator(value: string, cb: (error?: string) => void) {
 
 async function onSubmit() {
   status.value = 'loading';
-  let user: bigint;
-  try {
-    user = await bot.getUserByShortId({
-      guild: BigInt(input.guild),
-      id: Number(input.user),
-    });
-  } catch (err) {
-    console.error(err);
-    Message.error({
-      content: '请检查 用户# 是否正确',
-      duration: 3000,
-    });
-    return;
-  }
   try {
     const res = await bot.getGuildUserCredit({
-      guild: BigInt(input.guild),
-      user,
+      guild: input.guild as bigint,
+      user: input.user as bigint,
     });
     Modal.success({
       title: '获取成功',
@@ -99,22 +81,19 @@ async function onSubmit() {
       auto-label-width
       @submit-success='onSubmit'
     >
-      <FormItem label='服务器 ID' field='guild' :rules='[REQUEIRE_RULE, {
-        validator: bigintValidator,
-      }]'>
-        <Input v-model='input.guild' />
-      </FormItem>
-      <FormItem label='用户 #' field='user' :rules='[REQUEIRE_RULE, {
-        validator(value, cb) {
-          cb((!Number.isNaN(Number(value)) ? undefined : "错误的 Fanbook #"));
-        },
-      }]' tooltip='显示在个人主页'>
-        <Input v-model='input.user'>
-          <template #prefix>#</template>
-        </Input>
-      </FormItem>
+      <GuildInputForm
+        v-model='input.guild'
+        field='guild'
+        required
+      />
+      <UserInputForm
+        v-model='input.user'
+        :guild='input.guild'
+        field='user'
+        required
+      />
       <FormItem class='operations'>
-        <Button type='primary' html-type='submit'>
+        <Button type='primary' html-type='submit' @click='onSubmit'>
           获取荣誉列表
         </Button>
       </FormItem>

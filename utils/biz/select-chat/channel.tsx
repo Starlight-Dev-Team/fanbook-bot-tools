@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import {
   Button,
   FormItem,
-  Input,
   Modal,
   Space,
   Table,
@@ -18,7 +17,7 @@ import type {
 } from '@starlight-dev-team/fanbook-api-sdk/dist/interface';
 import type { Bot } from '@starlight-dev-team/fanbook-api-sdk';
 
-import { tryBigintify } from '~~/utils/util';
+import GuildInput from '~~/components/guild-input.vue';
 
 import type { ChatType, InputStatus } from './util';
 
@@ -102,24 +101,20 @@ export function selectChannel(
       dataIndex: 'title',
     }];
     const tableData = ref([] as TableData[]);
-    const guildId = ref(String(defaultGuildId ?? ''));
+    const guildId = ref(defaultGuildId);
     const guildIdStatus = ref(undefined as InputStatus);
     const result = ref([] as string[]);
-    async function onInputChange(value: string): Promise<void> {
-      const id = tryBigintify(value);
-      if (id === undefined) {
-        guildIdStatus.value = 'error';
-        return;
-      }
+    async function onInputChange(value: bigint): Promise<void> {
+      guildId.value = value;
       guildIdStatus.value = 'validating';
       try { // 尝试获取频道列表
-        const res = await bot.getGuildChannels({ guild: id });
+        const res = await bot.getGuildChannels({ guild: value });
         // 获取成功，放到表中
         tableData.value = [];
         for (const item of res) {
           if (item.type === channelType) { // 过滤不需要的频道
             tableData.value.push({
-              key: String(item.uuid),
+              key: item.uuid.toString(),
               title: item.title,
             });
           }
@@ -134,7 +129,7 @@ export function selectChannel(
       for (const item of result.value) chat.push(BigInt(item));
       modal.close();
       reslove({
-        guild: BigInt(guildId.value),
+        guild: guildId.value,
         channel: chat,
       });
     }
@@ -154,9 +149,9 @@ export function selectChannel(
           validateStatus={guildIdStatus.value}
           feedback
         >
-          <Input
-            v-model={guildId.value}
+          <GuildInput
             onChange={onInputChange}
+            onError={() => guildIdStatus.value = 'error'}
           />
         </FormItem>)}
         <Table

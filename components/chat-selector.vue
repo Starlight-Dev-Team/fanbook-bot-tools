@@ -18,12 +18,17 @@ import type {
 import { useAccountStore } from '@/stores/account';
 
 export interface SelectedChat {
+  /** 频道所属的服务器 ID 。 */
   guild?: bigint;
+  /** 聊天 ID 。 */
   chat: bigint;
 }
 export interface Props {
+  /** 当前选中的聊天。 */
   modelValue: SelectedChat[];
+  /** 最大选择数。 */
   max?: number;
+  /** ChatSelector 配置。 */
   selector?: SelectChatConfig;
 }
 
@@ -38,6 +43,7 @@ const input = ref(props.modelValue);
 
 const bot = new Bot(useAccountStore().activeBotToken as string);
 
+/** 添加聊天。 */
 async function add() {
   const res = await selectChat({
     bot,
@@ -51,6 +57,7 @@ async function add() {
   }
 }
 
+/** 删除聊天。 */
 function remove(index: number) {
   input.value.splice(index, 1);
 }
