@@ -286,13 +286,13 @@ async function onSubmit() {
     }
   }
   const single = targets.length === 1;
-  if (!info) {
+  if (!info.length) {
     Modal.error({
       title: '发送失败',
       content: () => (<div>
         {
           single ?
-          (<TypographyParagraph>{ errors[0] }</TypographyParagraph>) :
+          (<TypographyParagraph>{ errorToMessage(errors[0]) }</TypographyParagraph>) :
           (<TypographyParagraph>{ errors } 条消息全部发送失败！</TypographyParagraph>)
         }
       </div>),
