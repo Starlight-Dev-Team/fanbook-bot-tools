@@ -2,17 +2,16 @@ import { ref } from 'vue';
 
 import {
   Button,
-  FormItem,
-  Input,
   Modal,
   Space,
 } from '@arco-design/web-vue';
 
 import type { Bot } from '@starlight-dev-team/fanbook-api-sdk';
 
-import { tryBigintify } from '~~/utils/util';
-
 import type { InputStatus } from './util';
+
+import UserInputForm from '~~/components/user-input-form.vue';
+import GuildInputForm from '~~/components/guild-input-form.vue';
 
 export interface SelectPrivateChatConfig {
   /** 操作者机器人。 */
@@ -56,42 +55,28 @@ export function selectPrivateChat(
   } = config;
   if (title === undefined) title = '选择私聊';
   return new Promise((reslove) => {
-    const guildId = ref(disabledInputGuild ? String(defaultGuildId) : '');
+    const guildId = ref(disabledInputGuild ? defaultGuildId : undefined);
     const guildIdStatus = ref(undefined as InputStatus);
-    const userShortId = ref('');
-    const userShortIdStatus = ref(undefined as InputStatus);
+    const userId = ref(undefined as bigint | undefined);
     const result = ref(undefined as bigint | undefined);
     async function onInputChange(): Promise<void> {
-      const guild = tryBigintify(guildId.value);
+      const guild = guildId.value;
       if (guild === undefined) { // 服务器 ID 格式错误
         guildIdStatus.value = 'error';
-        userShortIdStatus.value = undefined; // 服务器 ID 错误时不检测目标用户
         return;
       }
-      const short = Number(userShortId.value);
-      if (Number.isNaN(short)) { // 目标用户格式错误
-        userShortIdStatus.value = 'error';
-        return;
-      }
-      // 请求时显示为加载中
       guildIdStatus.value = undefined;
-      userShortIdStatus.value = 'validating';
-      let user: bigint;
-      try { // 尝试获取用户 ID
-        user = await bot.getUserByShortId({ guild, id: short });
-      } catch { // 获取用户 ID 失败
-        userShortIdStatus.value = 'error';
-        return;
-      }
       try { // 尝试获取私聊 ID
-        result.value = await bot.getPrivateChat({ target: user });
+        result.value = await bot.getPrivateChat({
+          target: userId.value as bigint,
+        });
       } catch { // 获取私聊 ID 失败
-        userShortIdStatus.value = 'error';
         return;
       }
       // 一切正常
-      userShortIdStatus.value = guildIdStatus.value = 'success';
+      guildIdStatus.value = 'success';
     }
+    watch([guildId, userId], onInputChange);
     function onCancel(): void {
       modal.close();
       reslove({ chat: undefined });
@@ -103,31 +88,19 @@ export function selectPrivateChat(
     const modal = Modal.open({
       title,
       content: () => (<>
-        {!disabledInputGuild && (<FormItem
-          field='?'
-          label='所在服务器 ID'
-          help={guildIdStatus.value === 'error' ? '服务器 ID 无效' : undefined}
-          validateStatus={guildIdStatus.value}
-          feedback
-        >
-          <Input
+        {!disabledInputGuild && (
+          <GuildInputForm
             v-model={guildId.value}
-            onChange={onInputChange}
+            field='?'
+            required
           />
-        </FormItem>)}
-        <FormItem
+        )}
+        <UserInputForm
+          v-model={userId.value}
+          guild={guildId.value}
           field='?'
-          label='目标用户'
-          help={userShortIdStatus.value === 'error' ? '无效的目标用户' : undefined}
-          validateStatus={userShortIdStatus.value}
-          feedback
-        >
-          <Input
-            v-model={userShortId.value}
-            v-slots={{ prefix: () => '#' }}
-            onChange={onInputChange}
-          />
-        </FormItem>
+          required
+        />
       </>),
       footer: () => (<Space>
         {
