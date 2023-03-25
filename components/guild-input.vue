@@ -1,10 +1,17 @@
 <script lang="ts" setup>
 export interface Props {
+  /** 当前输入的服务器 ID 。 */
   modelValue?: bigint;
 }
 defineProps<Props>();
 
-const emit = defineEmits(['update:model-value', 'change', 'error']);
+const emit = defineEmits([
+  'update:model-value',
+  /** 输入值改变且输入正确时触发。 */
+  'change',
+  /** 输入值改变且输入错误时触发。 */
+  'error',
+]);
 
 const input = ref(undefined as bigint | undefined);
 

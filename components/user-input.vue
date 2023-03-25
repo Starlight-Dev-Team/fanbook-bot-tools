@@ -14,8 +14,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits([
   'update:model-value',
+  /** 输入值改变时触发。 */
   'input',
-  'success',
+  /** 输入值改变且输入正确时触发。 */
+  'change',
+  /** 输入值改变且输入错误时触发。 */
   'error',
 ]);
 
@@ -38,7 +41,7 @@ async function onChange(v: string | undefined) {
       id,
     });
     emit('update:model-value', user);
-    emit('success', user);
+    emit('change', user);
   } catch {
     emitErrorEvent();
   }
