@@ -1197,10 +1197,10 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
-"@starlight-dev-team/fanbook-api-sdk@^0.6.2":
-  version "0.6.2"
-  resolved "https://registry.npmjs.org/@starlight-dev-team/fanbook-api-sdk/-/fanbook-api-sdk-0.6.2.tgz#286cdb77ac2df2349ec56465c439545068d42321"
-  integrity sha512-g2x8ujr9j3mFpMwh6hA76O2BAiIcUXNwoCrjOqfDON+iPZEmCUrqV8l9zLH3sIUEWtjBRnosRIyH7xdVvLw7sA==
+"@starlight-dev-team/fanbook-api-sdk@0.6.3":
+  version "0.6.3"
+  resolved "https://registry.npmjs.org/@starlight-dev-team/fanbook-api-sdk/-/fanbook-api-sdk-0.6.3.tgz#aabf65e660c4e2230a0576af71f42dc28d40e74e"
+  integrity sha512-/gg7j3SXm5ZWSL+UhUbwv5VrQYy9r9rybDEYjQb6bgfmaYa2godxdlMoTY1ZN3E/WcmRsbWzWXy61sLvM7dakg==
   dependencies:
     "@types/json-bigint" "^1.0.1"
     "@types/qs" "^6.9.7"
