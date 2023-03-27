@@ -18,7 +18,8 @@ export default defineNuxtRouteMiddleware((to) => {
       async function doNavigate(authorized: boolean) {
         if (!authorized) {
           last = new Date(); // 更新缓存
-          await auth?.redirect();
+          await navigateTo('/auth', { replace: true }); // 重新授权
+          resolve();
         } else resolve();
       }
       const v = auth.isAuthorized();

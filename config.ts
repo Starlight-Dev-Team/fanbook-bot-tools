@@ -33,7 +33,7 @@ const configs: Record<EnvType, Config> = {
             },
             mode: 'cors',
           })).data.value);
-          if (Reflect.has(Object(res), 'error')) {
+          if (res === null || Reflect.has(Object(res), 'error')) {
             throw new Error('Request failed with error field');
           }
           return res as Profile;
@@ -57,6 +57,7 @@ const configs: Record<EnvType, Config> = {
           },
           mode: 'cors',
         });
+        if (req.error.value) throw new Error('Remote failed');
         const session = toRaw(req.data.value) as Session;
         if (!Object.keys(session).length) {
           throw new Error('Request failed');
