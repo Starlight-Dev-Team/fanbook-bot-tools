@@ -1,5 +1,3 @@
-import process from 'process';
-
 import type { Profile, Session } from '@starlight-dev-team/fanbook-api-sdk/dist/types';
 
 import { defineServiceConfig } from '~~/utils/config';
