@@ -64,12 +64,9 @@ const configs: Record<EnvType, Config> = {
   }),
 };
 
-const env = (() => {
-  let result = process.env.START_ENV;
-  if (!result || Reflect.has(configs, result)) { // 环境配置不存在
-    result = 'prod'; // 默认正式环境
-  }
-  return result as EnvType;
+const env = ((): EnvType => {
+  if (location.origin.includes('pre.fb-bot.')) return 'pre';
+  else return 'prod';
 })();
 
 export const useServiceConfig = () => configs[env];
