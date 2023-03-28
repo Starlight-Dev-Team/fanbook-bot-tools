@@ -28,9 +28,7 @@ function doErrorMsg(err: unknown) {
 try {
   await service.auth?.getProfile();
   await navigateTo('/'); // 鉴权已通过
-} catch (err) {
-  doErrorMsg(err);
-}
+} catch (err) {}
 
 if (status.value === 'loading') { // 如果上面已经处理过，则此处不执行
   try {
