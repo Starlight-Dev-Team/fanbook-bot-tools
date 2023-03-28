@@ -13,7 +13,7 @@ export default defineNuxtPlugin(async() => {
       };
     } catch { // 鉴权失败
       const path = useRoute().path;
-      if (path !== '/auth') {
+      if (path !== '/auth' && path !== '/auth/') {
         location.pathname = '/auth';
       }
     }
