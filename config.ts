@@ -25,21 +25,18 @@ const configs: Record<EnvType, Config> = {
       async getProfile() {
         const token = useCookie('token').value;
         if (!token) throw new Error('No token given');
-        try {
-          const res = toRaw((await useFetch('https://gubfpx.laf.dev/profile', {
-            method: 'post',
-            body: {
-              token,
-            },
-            mode: 'cors',
-          })).data.value);
-          if (res === null || Reflect.has(Object(res), 'error')) {
-            throw new Error('Request failed with error field');
-          }
-          return res as Profile;
-        } catch {
-          throw new Error('Request failed');
+        const req = await useFetch('https://gubfpx.laf.dev/profile', {
+          method: 'post',
+          body: {
+            token,
+          },
+          mode: 'cors',
+        });
+        const data = toRaw(req.data.value as any);
+        if (data.error === true) { // 请求返回错误
+          throw new Error(data.reason ?? 'Request failed');
         }
+        return data as Profile;
       },
       async redirect() {
         await navigateTo('https://a1.fanbook.mobi/open/oauth2/authorize?response_type=code&client_id=474159040155488256', {
@@ -57,11 +54,9 @@ const configs: Record<EnvType, Config> = {
           },
           mode: 'cors',
         });
+        const data = toRaw(req.data.value as any);
         if (req.error.value) throw new Error('Remote failed');
-        const session = toRaw(req.data.value) as Session;
-        if (!Object.keys(session).length) {
-          throw new Error('Request failed');
-        }
+        const session = data as Session;
         useCookie('token').value = session.accessToken;
         return session.accessToken;
       },
@@ -72,7 +67,7 @@ const configs: Record<EnvType, Config> = {
 const env = (() => {
   let result = process.env.START_ENV;
   if (!result || Reflect.has(configs, result)) { // 环境配置不存在
-    result = 'prod'; // 默认正式环境
+    result = 'pre'; // 默认正式环境
   }
   return result as EnvType;
 })();
