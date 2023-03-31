@@ -8,6 +8,11 @@ TypographyText,
 
 import type { Profile } from '@starlight-dev-team/fanbook-api-sdk/dist/types';
 
+definePageMeta({
+  title: '获取机器人信息',
+  requiredAuth: true,
+});
+
 const result = ref(undefined as Profile | undefined);
 
 onMounted(async () => {
