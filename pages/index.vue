@@ -5,6 +5,7 @@ import {
   IconDelete,
   IconList,
   IconMessage,
+  IconRobot,
   IconStar,
 } from '@arco-design/web-vue/es/icon';
 
@@ -29,6 +30,15 @@ const features: Array<{
   /** 分类下属功能卡片数据。 */
   children: Feature[];
 }> = [
+  {
+    title: '机器人',
+    icon: <IconRobot size={18} />,
+    children: [{
+      icon: <IconRobot size={36} />,
+      content: '资料信息',
+      link: 'feature/get-bot-info',
+    }],
+  },
   {
     title: '机器人消息',
     icon: <IconMessage />,
