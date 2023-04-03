@@ -220,6 +220,7 @@ async function sendAsOneByOne() {
         onClick={modal.close}
       >确定</Button>
     </Space>),
+    onCancel, 
   });
   try {
     /** 存在则标记为 `null`。 */
@@ -233,6 +234,7 @@ async function sendAsOneByOne() {
       message: bigint;
     }>();
     const task = createTask('逐个通知成员', total.value, async(ctx) => { // 执行
+      console.log(status.value);
       if (status.value === 'error') { // 手动终止
         throw new Error('Operation cancelled');
       }
@@ -248,7 +250,9 @@ async function sendAsOneByOne() {
         ++failed.value;
       }
     }, (ctx) => { // 回滚
+      console.log('revert start', history, users);
       const record = history.get(users[ctx.step]);
+      console.log('revert step', history, users);
       if (!record) return; // 未发送成功
       bot.deleteMessage({ // 回滚操作已有异常保护
         chat: record.chat,
@@ -261,12 +265,15 @@ async function sendAsOneByOne() {
     task.event.on('before-rollback', () => {
       task.pause();
       finished.value = 0;
-      Modal.info({
+      const revertModal = Modal.info({
         title: '正在撤回消息',
         content: () => (<TypographyParagraph>
           正在尝试撤回 { finished.value - failed.value } 条消息。
         </TypographyParagraph>),
-      })
+      });
+      task.event.on('rolled-back', () => {
+        revertModal.close();
+      });
     });
     task.start();
     await (new Promise((resolve) => { // 等待任务执行完成
