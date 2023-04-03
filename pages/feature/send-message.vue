@@ -4,6 +4,8 @@ import type {
   FanbookApiError,
 } from '@starlight-dev-team/fanbook-api-sdk/dist/util';
 
+import { createTask } from '~~/utils/task';
+
 import type { SelectedChat } from '~~/components/chat-selector.vue';
 
 import useAccountStore from '~~/stores/account';
@@ -28,6 +30,8 @@ import {
   ListItem,
 } from '@arco-design/web-vue';
 import type { FieldRule } from '@arco-design/web-vue';
+import { use } from 'h3';
+import { fail } from 'assert';
 
 definePageMeta({
   title: '发送消息',
@@ -88,7 +92,7 @@ function warnSendAsOneByOne() {
         <TypographyText bold>所有成员</TypographyText>
         。
         <br />
-        发送后暂不支持撤回，请确认操作！
+        请确认操作！
       </div>),
       maskClosable: false,
       hideCancel: false,
@@ -120,7 +124,7 @@ async function send(chat: bigint) {
  * 获取所选的频道中的用户。
  * @returns 用户 Map
  */
-async function getUsers() {
+async function getUsers(): Promise<bigint[] | void> {
   const users = new Map<bigint, null>();
   // 分页大小
   const step = 20;
@@ -134,7 +138,7 @@ async function getUsers() {
     // 退出循环条件：本次轮询中出现了重复值
     // 原理：如果超出范围，服务器不会报错，会返回最近的长度相同的范围，也就是会取到一批重复的值
     while (true) {
-      now = await bot.getChannelMembers({guild, channel: chat, range: {
+      now = await bot.getChannelMembers({ guild, channel: chat, range: {
         start,
         end,
       }});
@@ -153,7 +157,11 @@ async function getUsers() {
       end += step;
     }
   }
-  return users;
+  const result: bigint[] = [];
+  for (const [ item ] of users) { // 取出所有用户
+    result.push(item);
+  }
+  return result;
 }
 const finished = ref(0);
 const failed = ref(0);
@@ -212,23 +220,66 @@ async function sendAsOneByOne() {
         onClick={modal.close}
       >确定</Button>
     </Space>),
+    onCancel, 
   });
   try {
-    // 存在则标记为 null
+    /** 存在则标记为 `null`。 */
     const users = await getUsers();
     if (!users) return; // 操作取消
     currentStep.value = 2;
-    total.value = users.size;
-    for (const [ user ] of users) {
-      if (done.value) return;
+    total.value = users.length;
+    /** 用户 ID 对应聊天 ID、消息 ID。 */
+    const history = new Map<bigint, {
+      chat: bigint;
+      message: bigint;
+    }>();
+    const task = createTask('逐个通知成员', total.value, async(ctx) => { // 执行
+      console.log(status.value);
+      if (status.value === 'error') { // 手动终止
+        throw new Error('Operation cancelled');
+      }
       try { // 单次错误保护
-        await send(await bot.getPrivateChat({ target: user }));
+        const user = users[ctx.step - 1];
+        const chat = await bot.getPrivateChat({ target: user });
+        const message = await send(chat);
+        history.set(user, {
+          chat,
+          message,
+        });
       } catch {
         ++failed.value;
-        continue;
       }
+    }, (ctx) => { // 回滚
+      console.log('revert start', history, users);
+      const record = history.get(users[ctx.step]);
+      console.log('revert step', history, users);
+      if (!record) return; // 未发送成功
+      bot.deleteMessage({ // 回滚操作已有异常保护
+        chat: record.chat,
+        message: record.message,
+      });
+    }, {});
+    task.event.on('stepped', () => { // 进度同步
       ++finished.value;
-    }
+    });
+    task.event.on('before-rollback', () => {
+      task.pause();
+      finished.value = 0;
+      const revertModal = Modal.info({
+        title: '正在撤回消息',
+        content: () => (<TypographyParagraph>
+          正在尝试撤回 { finished.value - failed.value } 条消息。
+        </TypographyParagraph>),
+      });
+      task.event.on('rolled-back', () => {
+        revertModal.close();
+      });
+    });
+    task.start();
+    await (new Promise((resolve) => { // 等待任务执行完成
+      task.event.on('done', resolve);
+      task.event.on('before-rollback', resolve);
+    }));
     status.value = 'finish';
     done.value = true;
   } catch (err) {
