@@ -21,6 +21,7 @@ import type { Profile } from '@starlight-dev-team/fanbook-api-sdk/dist/types';
 import { switchBot } from '~~/utils/account';
 
 const defaultTitle = 'Fanbook 机器人工具';
+const hasAnnouncements = !!useAppConfig().announcements.length;
 
 let botsProfile: Record<string, Profile> = {};
 
@@ -85,6 +86,9 @@ onBeforeMount(async () => {
       </ClientOnly>
     </template>
   </PageHeader>
+  <div :class='hasAnnouncements ? "announcement" : undefined'>
+    <Announcement />
+  </div>
 </template>
 
 <style scoped>
@@ -103,5 +107,9 @@ body.mobile .bot-avatar:deep() .bot-avatar-loading {
   visibility: hidden;
   width: 0;
   height: 100%;
+}
+
+.announcement {
+  margin-bottom: 12px;
 }
 </style>
