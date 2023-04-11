@@ -3,7 +3,23 @@ import type { AnnouncementType } from '~~/app.config';
 
 import { Alert, Tag, TypographyText } from '@arco-design/web-vue';
 
-const info = useAppConfig().announcements;
+function getLocalClosed(): string[] {
+  try {
+    const given = localStorage.getItem('announcements');
+    if (!given) throw new Error('[catched]');
+    const result = JSON.parse(given);
+    if (!(result instanceof Array)) throw new Error('[catched]');
+    return result;
+  } catch {
+    localStorage.setItem('announcements', '[]');
+    return [];
+  }
+}
+
+const closed = getLocalClosed();
+const info = useAppConfig().announcements.filter(
+  (v) => !closed.includes(v.title),
+);
 
 const current = ref(0);
 
@@ -22,6 +38,13 @@ function toTagColor(type: AnnouncementType): TagColor {
     case 'info': return '#165dff';
   }
 }
+
+function onClose(key: number) {
+  localStorage.setItem(
+    'announcements',
+    JSON.stringify(getLocalClosed().concat(info[key].title)),
+  );
+}
 </script>
 
 <template>
@@ -33,6 +56,8 @@ function toTagColor(type: AnnouncementType): TagColor {
       :key='key'
       :type='toAlertType(item.type)'
       :show-icon='false'
+      closable
+      @close='() => onClose(key)'
     >
       <Tag class='tag' :color='toTagColor(item.type)'>公告</Tag>
       <TypographyText bold>{{ item.title }} 👉</TypographyText>
