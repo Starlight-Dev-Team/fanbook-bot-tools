@@ -18,9 +18,9 @@ declare module 'nuxt/schema' {
 
 const config: AppConfig = {
   announcements: [{
-    type: 'danger',
-    title: '关于 Fanbook 对于机器人消息管制的通知',
-    link: 'https://github.com/Starlight-Dev-Team/fanbook-bot-tools/discussions/69',
+    type: 'info',
+    title: '欢迎加入机器人工具 Fanbook 服务器',
+    link: 'https://fanbook.mobi/rjCNRFUN',
   }],
 };
 
