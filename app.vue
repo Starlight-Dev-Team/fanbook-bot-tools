@@ -11,6 +11,7 @@ checkAuth(useRoute());
 </script>
 
 <template>
+  <title>Fanbook 机器人工具</title>
   <LayoutHeader>
     <NuxtLayout name='header' />
   </LayoutHeader>
