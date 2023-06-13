@@ -5,43 +5,7 @@ on:
       - main
 jobs:
   build:
-    name: 构建
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: 准备 Git 环境
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: 修改 Git 用户设置
-        run: |
-          git config --global user.email "noreply@github.com"
-          git config --global user.name "Github Actions"
-      - name: 拉取代码
-        run: |
-          git pull -f origin main
-          git push -d origin gh-pages
-          git gc
-          git switch -c gh-pages
-      - name: 准备 Node.js 环境
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: 安装依赖
-        run: |
-          npm install -g yarn
-          yarn
-      - name: 构建静态站点
-        run: |
-          yarn build
-          git add dist -f
-          git commit -m "部署"
-      - name: 推送物料
-        run: git push origin gh-pages --set-upstream
-  deploy:
-    name: 部署
-    needs: build
+    name: 构建与部署
     permissions:
       contents: read
       pages: write
@@ -55,10 +19,20 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: 下载物料
+      - name: 准备 Node.js 环境
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.15.0
+      - name: 安装包管理器
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 8.3.1
+      - name: 安装依赖
         run: |
-          git pull -f origin gh-pages
-          git switch gh-pages
+          pnpm install
+      - name: 构建静态站点
+        run: |
+          pnpm build
       - name: 设置环境
         uses: actions/configure-pages@v2
         with:
