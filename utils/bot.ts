@@ -14,3 +14,8 @@ export function getCurrentBot(): Bot {
   }
   return currentBot;
 }
+
+/** 机器人 API 错误码信息。 */
+export enum BotErrorCode {
+  '没有权限' = 1012,
+};
