@@ -9,5 +9,6 @@ export default defineNuxtConfig({
         ],
       },
     ],
+    '@nuxtjs/tailwindcss',
   ],
 });

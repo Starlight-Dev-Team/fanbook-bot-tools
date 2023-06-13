@@ -9,15 +9,19 @@ module.exports = {
   env: {
     node: true,
   },
+  parser: '@typescript-eslint/parser',
   extends: 'standard-with-typescript',
   parserOptions: {
+    parser: '@typescript-eslint/parser',
     project: ['./tsconfig.json'],
     ecmaVersion: 11,
     sourceType: 'module',
   },
   rules: {
+    'comma-dangle': [2, 'always-multiline'],
     'promise/param-names': [0],
     'no-return-assign': [0],
+    'semi': [2, 'always'],
     '@typescript-eslint/comma-dangle': [2, 'always-multiline'],
     '@typescript-eslint/explicit-function-return-type': [0],
     '@typescript-eslint/object-curly-spacing': [2, 'always'],
