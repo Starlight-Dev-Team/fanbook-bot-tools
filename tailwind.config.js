@@ -9,4 +9,4 @@ module.exports = {
     './app.vue',
   ],
   important: true,
-}
+};
