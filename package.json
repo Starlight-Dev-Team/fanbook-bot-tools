@@ -15,7 +15,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.6.1",
     "eslint-plugin-promise": "^6.1.1",
-    "nuxt": "^3.2.3",
+    "nuxt": "^3.5.3",
     "typescript": "~4"
   },
   "dependencies": {
