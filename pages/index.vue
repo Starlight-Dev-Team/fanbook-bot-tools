@@ -69,26 +69,19 @@ const features: Array<{
 </script>
 
 <template>
-  <div class='features'>
+  <div class='w-11/12 mx-auto my-0'>
     <Row v-for='row in features'>
-      <Card
-        class='feature-box'
-        :title='row.title'
-      >
+      <Card class='w-full mb-5' :title='row.title'>
         <Card
           v-for='item in row.children'
-          class='feature-card' 
+          class='card inline-flex w-24 h-24 mr-4 cursor-pointer'
           @click='() => $router.push(item.link)'
         >
-          <span>
-            <component :is='item.icon' />
-          </span>
-          <p class='feature-content'>
-            {{ item.content }}
-          </p>
+          <component :is='item.icon' />
+          <p class='mb-1 mt-auto'>{{ item.content }}</p>
         </Card>
         <template #title>
-          <TypographyTitle class='feature-box-title' :heading='2'>
+          <TypographyTitle class='w-full m-0 text-lg font-bold' :heading='2'>
             <component :is='row.icon' />
             {{ row.title }}
           </TypographyTitle>
@@ -98,40 +91,11 @@ const features: Array<{
   </div>
 </template>
 
-<style scoped>
-.features {
-  width: 90%;
-  margin: 0 auto;
-}
-.feature-box {
-  width: 100%;
-  margin-bottom: 20px;
-}
-.feature-box:deep() .arco-card-body {
-  display: flex;
-  flex-wrap: nowrap;
-}
-.feature-card {
-  width: 96px;
-  height: 96px;
-  margin-right: 20px;
-  cursor: pointer;
-}
-.feature-card:deep() > .arco-card-body {
-  display: flex;
-  width: 64px;
-  height: 64px;
-  flex-direction: column;
-  align-items: center;
-}
-.feature-content {
-  margin-bottom: 4px;
-  margin-top: auto;
-}
-.feature-box-title {
-  width: 100%;
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
+<style lang="postcss" scoped>
+.card:deep() > .arco-card-body {
+  @apply w-full h-full;
+  @apply inline-flex;
+  @apply items-center;
+  @apply flex-col;
 }
 </style>
