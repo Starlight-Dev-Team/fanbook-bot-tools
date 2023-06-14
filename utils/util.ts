@@ -1,5 +1,3 @@
-import { openDB } from 'idb';
-
 import type { FieldRule } from '@arco-design/web-vue';
 
 /**
