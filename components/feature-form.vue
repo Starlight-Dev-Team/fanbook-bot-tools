@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Message } from '@arco-design/web-vue';
-import jsonBigint from 'json-bigint';
 
 export interface Props<F extends {} = {}> {
   /** 表单信息。 */
@@ -26,22 +25,20 @@ const emit = defineEmits<Events>();
 
 /** 是否正在保存草稿。 */
 const saving = ref(false);
-/** 获取当前草稿在 `localStorage` 中的键。 */
-function getDraftKey() {
-  return `draft${useRoute().path}`;
-}
+const savingDebounced = refDebounced(saving, 500);
+/** 草稿键。 */
+const draftKey = useRoute().path;
 /** 使用草稿。 */
 async function restoreDraft() {
-  const draft = localStorage.getItem(getDraftKey());
+  const draft = await getDraft(draftKey);
   if (!draft) return;
-  emit('update:modelValue', jsonBigint.parse(draft));
+  emit('update:modelValue', draft);
 }
 /** 保存草稿。 */
-async function saveDraft() {
+async function handleSaveDraft() {
   saving.value = true;
   try {
-    const draft = jsonBigint.stringify(toRaw(props.modelValue));
-    localStorage.setItem(getDraftKey(), draft);
+    await setDraft(draftKey, toRaw(props.modelValue));
     Message.success({ content: '保存成功', duration: 2500 });
   } catch (e) {
     console.error(e);
@@ -50,8 +47,12 @@ async function saveDraft() {
   saving.value = false;
 }
 
-onBeforeMount(() => {
-  restoreDraft();
+onMounted(async () => {
+  if (SUPPORT_DRAFT) {
+    saving.value = true;
+    await restoreDraft();
+    saving.value = false
+  }
 });
 </script>
 
@@ -64,7 +65,7 @@ onBeforeMount(() => {
           <AButton type='primary' html-type='submit'>
             {{ props.submitText }}
           </AButton>
-          <AButton type='secondary' :loading='saving' @click='() => saveDraft()'>
+          <AButton type='secondary' :disabled='!SUPPORT_DRAFT' :loading='savingDebounced' @click='handleSaveDraft()'>
             保存草稿
           </AButton>
         </ASpace>
