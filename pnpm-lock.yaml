@@ -10,9 +10,9 @@ dependencies:
   '@starlight-dev-team/fanbook-api-sdk':
     specifier: 0.6.3
     version: 0.6.3(@types/node@20.3.1)
-  idb:
-    specifier: ^7.1.1
-    version: 7.1.1
+  json-bigint:
+    specifier: ^1.0.0
+    version: 1.0.0
   mitt:
     specifier: ^3.0.0
     version: 3.0.0
@@ -3774,10 +3774,6 @@ packages:
     dependencies:
       postcss: 8.4.24
     dev: true
-
-  /idb@7.1.1:
-    resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
-    dev: false
 
   /ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}

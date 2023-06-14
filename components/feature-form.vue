@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { Message } from '@arco-design/web-vue';
-import { openDB } from 'idb';
+import jsonBigint from 'json-bigint';
 
 export interface Props<F extends {} = {}> {
   /** 表单信息。 */
   modelValue: F;
   /** 是否正在加载中。 */
   loading?: boolean;
+  /** 加载中文字。 */
+  loadingText?: string;
   /** 提交按钮文字。 */
   submitText?: string;
 }
@@ -16,51 +18,45 @@ export interface Events<F extends {} = {}> {
 }
 const props = withDefaults(defineProps<Props<{}>>(), {
   loading: false,
+  loadingText: '正在执行',
   submitText: '提交',
 });
 
 const emit = defineEmits<Events>();
 
-const DRAFT_STORE_NAME = 'draft';
+/** 是否正在保存草稿。 */
+const saving = ref(false);
+/** 获取当前草稿在 `localStorage` 中的键。 */
+function getDraftKey() {
+  return `draft${useRoute().path}`;
+}
 /** 使用草稿。 */
 async function restoreDraft() {
-  const db = await idb({
-    upgrade(db) {
-      db.createObjectStore(DRAFT_STORE_NAME);
-    }
-  });
-  if (!db.objectStoreNames.contains(DRAFT_STORE_NAME)) {
-    const tx = db.transaction(DRAFT_STORE_NAME, 'versionchange');
-    await tx.done;
-  }
-  const tx = db.transaction(DRAFT_STORE_NAME, 'readonly');
-  const draft = await tx.store.get(useRoute().path);
-  await tx.done;
-  db.close();
+  const draft = localStorage.getItem(getDraftKey());
   if (!draft) return;
-  emit('update:modelValue', draft);
+  emit('update:modelValue', jsonBigint.parse(draft));
 }
 /** 保存草稿。 */
 async function saveDraft() {
+  saving.value = true;
   try {
-    const db = await idb();
-    const { store } = db.transaction(DRAFT_STORE_NAME, 'readwrite');
-    store.put(toRaw(props.modelValue), useRoute().path);
-    await store.transaction.done;
-    db.close();
+    const draft = jsonBigint.stringify(toRaw(props.modelValue));
+    localStorage.setItem(getDraftKey(), draft);
     Message.success({ content: '保存成功', duration: 2500 });
   } catch (e) {
     console.error(e);
     Message.error({ content: '保存失败', duration: 5000 });
   }
+  saving.value = false;
 }
-onMounted(() => {
-  if (SUPPORT_INDEXEDDB) restoreDraft().catch((e) => console.error(e));
+
+onBeforeMount(() => {
+  restoreDraft();
 });
 </script>
 
 <template>
-  <ASpin class='form-wrapper block mx-auto my-0' :loading='props.loading' tip='正在执行'>
+  <ASpin class='form-wrapper block mx-auto my-0' :loading='props.loading' :tip='props.loadingText'>
     <AForm class='w-full' :model='props.modelValue' auto-label-width @submit-success='() => emit("submit")'>
       <slot />
       <AFormItem>
@@ -68,7 +64,7 @@ onMounted(() => {
           <AButton type='primary' html-type='submit'>
             {{ props.submitText }}
           </AButton>
-          <AButton v-if='SUPPORT_INDEXEDDB' type='secondary' @click='() => saveDraft()'>
+          <AButton type='secondary' :loading='saving' @click='() => saveDraft()'>
             保存草稿
           </AButton>
         </ASpace>
@@ -78,7 +74,10 @@ onMounted(() => {
 </template>
 
 <style lang="postcss" scoped>
-.desktop .form-wrapper {
+.form-wrapper {
   @apply w-8/12;
+}
+.mobile .form-wrapper {
+  @apply w-10/12;
 }
 </style>

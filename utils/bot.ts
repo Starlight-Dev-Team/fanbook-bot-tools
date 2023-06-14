@@ -18,4 +18,6 @@ export function getCurrentBot(): Bot {
 /** 机器人 API 错误码信息。 */
 export enum BotErrorCode {
   '没有权限' = 1012,
+  '用户已关闭私信' = 1037,
+  '机器人已被用户屏蔽' = 1038,
 };
