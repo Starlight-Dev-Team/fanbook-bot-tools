@@ -39,34 +39,36 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-const input = ref(props.modelValue);
+const emit = defineEmits(['update:modelValue']);
 
 const bot = new Bot(useAccountStore().activeBotToken as string);
 
 /** 添加聊天。 */
 async function add() {
-  const res = await selectChat({
-    bot,
-  });
+  const input = [...props.modelValue];
+  const res = await selectChat({ bot });
   if (!res.chat.length) return;
   for (const item of res.chat) {
-    input.value.push({
+    input.push({
       guild: res.guild,
       chat: item,
     });
   }
+  emit('update:modelValue', input);
 }
 
 /** 删除聊天。 */
 function remove(index: number) {
-  input.value.splice(index, 1);
+  const input = [...props.modelValue];
+  input.splice(index, 1);
+  emit('update:modelValue', input);
 }
 </script>
 
 <template>
   <Space>
     <Button
-      v-if='input.length < props.max'
+      v-if='props.modelValue.length < props.max'
       type='secondary'
       shape='circle'
       @click='add'
@@ -76,7 +78,7 @@ function remove(index: number) {
       </template>
     </Button>
     <Tag
-      v-for='(chat, index) in input'
+      v-for='(chat, index) in props.modelValue'
       :key='String(chat.chat)'
       closable
       @close='() => remove(index)'
