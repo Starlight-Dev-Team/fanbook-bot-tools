@@ -1,5 +1,8 @@
 import type { FieldRule } from '@arco-design/web-vue';
 
+/** logo 图片链接。 */
+export const LOGO_URL = 'https://fb-cdn.fanbook.mobi/fanbook/app/files/chatroom/image/8af6a892e4143284cac9f719e99ee0a9.png';
+
 /**
  * 尝试转换为 BigInt 。
  * @param value 需要转换的值
@@ -21,3 +24,9 @@ export const FORM_REQUIRE_RULE: FieldRule = {
   required: true,
   message: '本项必填',
 };
+
+/**
+ * 去除 `T` 的必选属性，然后把 `T` 的可选属性变为必选。
+ */
+export type DefaultConfig<T extends object> =
+  Required<Pick<T, keyof T>> & Omit<T, keyof T>;
