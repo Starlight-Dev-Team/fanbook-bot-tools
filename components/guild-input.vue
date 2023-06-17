@@ -1,39 +1,41 @@
 <script lang="ts" setup>
 export interface Props {
   /** 当前输入的服务器 ID 。 */
-  modelValue?: bigint;
+  modelValue: bigint | undefined;
 }
-defineProps<Props>();
-
-const emit = defineEmits([
-  'update:model-value',
+export interface Events {
+  (event: 'update:modelValue', value: bigint): void;
   /** 输入值改变且输入正确时触发。 */
-  'change',
+  (event: 'change', value: bigint): void;
   /** 输入值改变且输入错误时触发。 */
-  'error',
-]);
-
-const input = ref(undefined as bigint | undefined);
-
-function emitErrorEvent() {
-  emit('error', input.value);
+  (event: 'error', value: bigint): void;
 }
 
-function onChange(v: bigint) {
-  input.value = v;
-  if (v.toString().length !== 18) { // 服务器 ID 长度为 18
-    emitErrorEvent();
-    return;
+const props = defineProps<Props>();
+const emit = defineEmits<Events>();
+
+const input: Ref<bigint | undefined> = ref(undefined);
+watch(
+  () => props.modelValue,
+  (v) => input.value = v,
+  { immediate: true },
+);
+
+function handleChange(v: bigint) {
+  if (v.toString().length === 18) { // 服务器 ID 长度为 18
+    emit('update:modelValue', v);
+    emit('change', v);
+  } else {
+    emit('error', v);
+    emit('update:modelValue', v);
   }
-  emit('change', v);
-  emit('update:model-value', v);
 }
 </script>
 
 <template>
   <BigintInput
     v-model='input'
-    @change='onChange'
-    @error='emitErrorEvent'
+    @change='handleChange'
+    @error='(v) => $emit("error", v)'
   />
 </template>

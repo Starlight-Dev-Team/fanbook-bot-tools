@@ -1,48 +1,45 @@
 <script lang="ts" setup>
-import { Input } from '@arco-design/web-vue';
-
 export interface Props {
-  modelValue?: bigint;
+  modelValue: bigint | undefined;
 }
+export interface Events {
+  (event: 'update:modelValue', value: bigint): void;
+  /** 输入值改变且输入正确时触发。 */
+  (event: 'change', value: bigint): void;
+  /** 输入值改变且输入错误时触发。 */
+  (event: 'error', value: string): void;
+}
+
 const props = defineProps<Props>();
+const emit = defineEmits<Events>();
 
-const emit = defineEmits(['update:model-value', 'input', 'change', 'error']);
+const input: Ref<string> = ref('');
+watch(
+  () => props.modelValue,
+  (v) => {
+    if (v !== undefined) input.value = v.toString();
+    else input.value = '';
+  },
+  { immediate: true },
+);
 
-const empty = ref(props.modelValue === undefined);
-const input = ref(empty.value ? props.modelValue?.toString() : undefined);
-function onInputChange(v: string | undefined) {
-  empty.value = !v;
-}
-onInputChange(input.value);
-watch(input, onInputChange);
-
-function emitErrorEvent() {
-  emit('error', input.value);
-}
-
-function onInput(v: string) {
-  input.value = v;
-  emit('input', v);
-}
-function onChange(v: string) {
-  try {
-    const numberic = BigInt(v);
-    emit('change', numberic);
-  } catch { // 非数值
-    emitErrorEvent();
+function handleChange(v: string) {
+  const ans = tryBigintify(v);
+  if (ans) {
+    emit('update:modelValue', ans);
+    emit('change', ans);
+  } else {
+    emit('error', v);
   }
 }
+
+const TYPE = 'number' as unknown as 'text';
 </script>
 
 <template>
-  <Input
-    v-bind='$attrs'
-    :model-value='empty ? "" : input?.toString()'
-    @input='onInput'
-    @change='onChange'
-  >
-    <template v-for='(item, key) in $slots' v-slot:[key]>
+  <AInput v-model='input' :type='TYPE' @change='handleChange'>
+    <template v-for='(item, key) in $slots' #[key]>
       <slot :name='key' />
     </template>
-  </Input>
+  </AInput>
 </template>

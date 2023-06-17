@@ -16,16 +16,16 @@ export interface Props {
   required?: boolean;
   rules?: RuleType[];
 }
+export interface Events {
+  (event: 'update:model-value', value: bigint): void;
+}
 
 const props = withDefaults(defineProps<Props>(), {
   required: false,
   label: '服务器 ID',
   rules: () => [],
 });
-
-const emit = defineEmits([
-  'update:model-value',
-]);
+const emit = defineEmits<Events>();
 
 /** 字段状态。 */
 type Status = 'error' | 'success' | 'warning' | 'validating' | undefined;
@@ -36,12 +36,7 @@ const badInput = ref(false);
 /** 合并属性到 rules 中。 */
 function wrapRules(rules: RuleType[]): RuleType[] {
   const result = [ ...rules ];
-  if (props.required) {
-    result.push({
-      required: true,
-      message: '本项必填',
-    });
-  }
+  if (props.required) result.push(FORM_REQUIRE_RULE);
   return result;
 }
 const rules = wrapRules(props.rules);
@@ -70,7 +65,7 @@ function error() {
       错误的服务器 ID
     </template>
     <GuildInput
-      :model-value='modelValue'
+      :model-value='(modelValue as bigint)'
       @change='update'
       @error='error'
     />

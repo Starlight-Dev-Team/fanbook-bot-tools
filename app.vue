@@ -25,39 +25,39 @@ checkAuth(useRoute());
   </LayoutFooter>
 </template>
 
-<style>
+<style lang="postcss">
 * {
-  margin: 0;
-  padding: 0;
+  @apply m-0 p-0;
 }
 *::-webkit-scrollbar {
-  display: none;
+  @apply hidden;
 }
-
 #__nuxt {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
+  @apply flex flex-col;
+  @apply min-h-[100vh];
 }
 header, footer {
-  user-select: none;
+  @apply select-none;
 }
 footer {
-  display: flex;
-  width: 100vw;
-  margin-bottom: 8px !important;
-  align-self: baseline;
-  flex-direction: column;
-  justify-content: center;
+  @apply flex flex-col justify-center self-baseline;
+  @apply w-full;
+  @apply mb-2;
 }
-
 .arco-typography b {
-  font-weight: bold;
+  @apply font-bold;
 }
 body.mobile .arco-modal.arco-modal-simple {
-  max-width: 75vw;
+  @apply max-w-[75vw];
 }
 body.mobile .arco-modal:not(.arco-modal-simple) {
-  max-width: 90vw;
+  @apply max-w-[90vw];
+}
+main {
+  @apply w-8/12;
+  @apply mx-auto my-0;
+}
+body.mobile main {
+  @apply w-10/12;
 }
 </style>
