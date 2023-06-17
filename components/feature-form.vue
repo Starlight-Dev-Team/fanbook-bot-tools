@@ -10,6 +10,8 @@ export interface Props<F extends {} = {}> {
   loadingText?: string;
   /** 提交按钮文字。 */
   submitText?: string;
+  /** 是否禁用草稿。 */
+  disableDraft?: boolean;
 }
 export interface Events<F extends {} = {}> {
   (event: 'update:modelValue', value: F): void;
@@ -48,7 +50,7 @@ async function handleSaveDraft() {
 }
 
 onMounted(async () => {
-  if (SUPPORT_DRAFT) {
+  if (!props.disableDraft && SUPPORT_DB) {
     saving.value = true;
     await restoreDraft();
     saving.value = false
@@ -57,7 +59,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ASpin class='form-wrapper block mx-auto my-0' :loading='props.loading' :tip='props.loadingText'>
+  <ASpin class='block mx-auto my-0' :loading='props.loading' :tip='props.loadingText'>
     <AForm class='w-full' :model='props.modelValue' auto-label-width @submit-success='() => emit("submit")'>
       <slot />
       <AFormItem>
@@ -65,7 +67,12 @@ onMounted(async () => {
           <AButton type='primary' html-type='submit'>
             {{ props.submitText }}
           </AButton>
-          <AButton type='secondary' :disabled='!SUPPORT_DRAFT' :loading='savingDebounced' @click='handleSaveDraft()'>
+          <AButton
+            v-if='!disableDraft'
+            :disabled='!SUPPORT_DB'
+            :loading='savingDebounced'
+            @click='handleSaveDraft'
+          >
             保存草稿
           </AButton>
         </ASpace>
@@ -73,12 +80,3 @@ onMounted(async () => {
     </AForm>
   </ASpin>
 </template>
-
-<style lang="postcss" scoped>
-.form-wrapper {
-  @apply w-8/12;
-}
-.mobile .form-wrapper {
-  @apply w-10/12;
-}
-</style>

@@ -4,15 +4,19 @@ import type { FieldRule } from '@arco-design/web-vue';
 
 export type RuleType = FieldRule<bigint | undefined>;
 export interface Props {
-  /** 当前获取到的用户 ID 。 */
-  modelValue?: bigint;
+  /** 用户短 ID 。 */
+  user: number | undefined;
   /** 用户所在服务器 ID 。 */
-  guild?: bigint;
+  guild: bigint | undefined;
   // 以下透传
   field: string;
   label?: string;
   required?: boolean;
   rules?: RuleType[];
+}
+export interface Events {
+  (event: 'update:user', value: number): void;
+  (event: 'change', value: bigint): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,38 +24,36 @@ const props = withDefaults(defineProps<Props>(), {
   required: false,
   rules: () => [],
 });
-
-const emit = defineEmits([
-  'update:model-value',
-]);
+const emit = defineEmits<Events>();
 
 /** 当前输入的值。 */
-const input = ref(props.modelValue?.toString());
+const input: Ref<number | undefined> = ref();
+watch(
+  [() => props.guild, () => props.user],
+  ([g, u]) => input.value = u,
+  { immediate: true },
+);
+watch(input, (v) => v && emit('update:user', v));
 /** 字段状态。 */
 type Status = 'error' | 'success' | 'warning' | 'validating' | undefined;
-const status = ref(undefined as Status);
+const status: Ref<Status> = ref();
 /** 是否为错误的输入。 */
 const badInput = ref(false);
 
 /** 合并属性到 rules 中。 */
 function wrapRules(rules: RuleType[]): RuleType[] {
   const result = [ ...rules ];
-  if (props.required) {
-    result.push({
-      required: true,
-      message: '本项必填',
-    });
-  }
+  if (props.required) result.push(FORM_REQUIRE_RULE);
   return result;
 }
 const rules = wrapRules(props.rules);
 
-function onChange(v: bigint) {
+function handleChange(v: bigint) {
   badInput.value = false;
   status.value = 'success';
-  emit('update:model-value', v);
+  emit('change', v);
 }
-function onError() {
+function handleError() {
   badInput.value = true;
   status.value = 'error';
 }
@@ -70,11 +72,10 @@ function onError() {
       用户不在此服务器内
     </template>
     <UserInput
-      :model-value='modelValue'
-      :guild='props.guild'
-      @input='(v: string) => input = v'
-      @change='onChange'
-      @error='onError'
+      v-model:user='input'
+      :guild='guild'
+      @change='handleChange'
+      @error='handleError'
     />
   </FormItem>
 </template>

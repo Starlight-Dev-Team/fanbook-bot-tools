@@ -7,10 +7,12 @@ export interface Props {
   modelValue: GuildCredit;
   editable?: boolean;
 }
+export interface Events {
+  (event: 'update:modelValue', value: GuildCredit): void;
+}
 
 const props = defineProps<Props>();
-
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<Events>();
 
 const data = ref(props.modelValue);
 watch(data, (v) => emit('update:modelValue', v)); // data 更新后向上传递
@@ -92,9 +94,8 @@ function handleRemoveSlotRow() {
     </template>
     <template #title>
       <AAvatar
-        class='bg-transparent'
+        class='min-w-[36px] min-h-[36px] bg-transparent'
         :image-url='data.authority.icon'
-        :size='36'
         @click='handleEditAuthorityIcon'
       >
         <template v-if='editable' #trigger-icon>
@@ -102,7 +103,7 @@ function handleRemoveSlotRow() {
         </template>
       </AAvatar>
       <ATypographyParagraph
-        class='inline ml-2 font-bold'
+        class='inline-flex items-center ml-2 font-bold'
         :editable='editable'
         v-model:edit-text='data.authority.name'
       >
@@ -131,8 +132,17 @@ function handleRemoveSlotRow() {
       @apply text-center;
     }
   }
-  .arco-card-header-title .arco-typography-edit-content input {
-    @apply text-left;
+  .arco-card-header-title {
+    @apply inline-flex;
+    .arco-typography-edit-content input {
+      @apply text-left;
+    }
+    .arco-avatar-image {
+      @apply rounded-lg;
+    }
+  }
+  .arco-avatar-image > img {
+    object-fit: contain;
   }
 }
 </style>

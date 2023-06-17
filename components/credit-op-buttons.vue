@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 export interface Props {
-  add: boolean;
-  remove: boolean;
+  add?: boolean;
+  remove?: boolean;
 }
 export interface Events {
   (event: 'add'): void;

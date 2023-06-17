@@ -24,6 +24,15 @@ export const FORM_REQUIRE_RULE: FieldRule = {
   required: true,
   message: '本项必填',
 };
+/** 服务器 ID 校验规则。 */
+export const FORM_GUILD_RULE: FieldRule = {
+  validator(v, cb) {
+    if (typeof v !== 'bigint') cb('错误的服务器 ID');
+    else if (v.toString().length !== 18) cb('错误的服务器 ID');
+    else cb(undefined);
+  },
+  message: '错误的服务器 ID',
+};
 
 /**
  * 去除 `T` 的必选属性，然后把 `T` 的可选属性变为必选。
