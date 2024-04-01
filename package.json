@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "sh scripts/build.sh",
-    "start": "sh scripts/start.sh",
+    "start": "nuxt dev --port 5443 --ssr false",
     "prelint": "sh scripts/pre-lint.sh",
     "lint": "sh scripts/lint.sh",
     "postinstall": "nuxt prepare"
@@ -30,5 +30,11 @@
     "mitt": "^3.0.0",
     "pinia": "^2.0.33",
     "vconsole": "^3.15.0"
-  }
+  },
+  "description": "",
+  "version": "1.0.0",
+  "main": "tailwind.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

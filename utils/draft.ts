@@ -18,8 +18,8 @@ export { SUPPORT_DRAFT };
  * @param key 草稿键
  */
 export async function getDraft(key: string): Promise<unknown> {
-  if (!db) return;
-  return (await db.table('draft').get(key)).value;
+  if (!db) return; // 在例如edge上会未定义，如果 db 未定义，直接返回
+  return (await db.table('draft').get(key))?.value;
 }
 /**
  * 设置草稿内容。

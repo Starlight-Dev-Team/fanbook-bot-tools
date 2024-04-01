@@ -3,7 +3,8 @@ import { FanbookApiError } from '@starlight-dev-team/fanbook-api-sdk/dist/util';
 
 import { BotErrorCode } from '~/utils/bot';
 
-import { SelectedChat } from '~/components/chat-selector.vue';
+import type { SelectedChat } from '~/components/chat-selector.vue';
+
 import FeatureForm from '~/components/feature-form.vue';
 
 definePageMeta({
@@ -42,7 +43,6 @@ function sendErrorToMsg(e: unknown): string | undefined {
   }
   return undefined;
 }
-
 interface SendOptions {
   chat: bigint;
   content: string;
