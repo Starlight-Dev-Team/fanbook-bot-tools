@@ -56,7 +56,7 @@ const TOKEN_LENGTH = 96;
 /**
  * 校验 token ，更新头像信息。
  */
- async function onTokenInput(value: string) {
+async function onTokenInput(value: string) {
   if (value.length !== TOKEN_LENGTH) {
     status.value = 'failed';
     return;

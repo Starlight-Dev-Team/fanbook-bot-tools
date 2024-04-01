@@ -43,6 +43,7 @@ function sendErrorToMsg(e: unknown): string | undefined {
   }
   return undefined;
 }
+
 interface SendOptions {
   chat: bigint;
   content: string;
