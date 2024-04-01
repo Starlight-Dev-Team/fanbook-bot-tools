@@ -9,19 +9,18 @@ jobs:
       - name: 初始化 Node.js 环境
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - name: 获取缓存
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: node_modules
           path: node_modules
       - name: 安装依赖
-        run: |
-          yarn
-          yarn prelint
+        uses: pnpm/action-setup@v3
+        with:
+          run_install: true
       - name: 运行测试命令
-        run: |
-          yarn lint
+        run: pnpm lint
   Build:
     runs-on: ubuntu-latest
     steps:
@@ -30,15 +29,15 @@ jobs:
       - name: 初始化 Node.js 环境
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - name: 获取缓存
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: node_modules
           path: node_modules
       - name: 安装依赖
-        run: |
-          yarn
+        uses: pnpm/action-setup@v3
+        with:
+          run_install: true
       - name: 运行测试命令
-        run: |
-          yarn build
+        run: pnpm build
