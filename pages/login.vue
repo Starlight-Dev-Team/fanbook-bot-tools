@@ -61,7 +61,6 @@ async function onTokenInput(value: string) {
     status.value = 'failed';
     return;
   }
-  status.value = 'loading';
   const now = new Bot(value);
   try {
     // 校验并获取头像
@@ -74,10 +73,10 @@ async function onTokenInput(value: string) {
     // 更新数据
     avatar.value = img;
     bot.value = now;
+    // 在请求完成后才更新状态
     status.value = 'success';
   } catch (err) {
     avatar.value = undefined;
-    status.value = 'failed';
   }
 }
 
@@ -179,3 +178,4 @@ body.mobile .form {
   margin-top: -12px;
 }
 </style>
+

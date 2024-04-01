@@ -19,7 +19,7 @@ export { SUPPORT_DRAFT };
  */
 export async function getDraft(key: string): Promise<unknown> {
   if (!db) return;
-  return (await db.table('draft').get(key)).value;
+  return (await db.table('draft').get(key))?.value;
 }
 /**
  * 设置草稿内容。
