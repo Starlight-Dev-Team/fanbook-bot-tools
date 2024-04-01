@@ -10,7 +10,7 @@ module.exports = {
     node: true,
   },
   parser: '@typescript-eslint/parser',
-  extends: 'standard-with-typescript',
+  extends: 'love',
   parserOptions: {
     parser: '@typescript-eslint/parser',
     project: ['./tsconfig.json'],
@@ -38,13 +38,6 @@ module.exports = {
     '@typescript-eslint/quotes': [2, 'single'],
     '@typescript-eslint/semi': [2, 'always'],
     '@typescript-eslint/space-before-function-paren': [2, 'never'],
-    '@typescript-eslint/strict-boolean-expressions': [2, {
-      'allowString': true,
-      'allowNumber': true,
-      'allowNullableObject': true,
-      'allowNullableBoolean': true,
-      'allowNullableString': true,
-      'allowNullableNumber': true,
-    }],
+    '@typescript-eslint/strict-boolean-expressions': [0],
   }
 };
