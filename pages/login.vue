@@ -56,13 +56,14 @@ const TOKEN_LENGTH = 96;
 /**
  * 校验 token ，更新头像信息。
  */
-async function onTokenInput(value: string) {
+ async function onTokenInput(value: string) {
   if (value.length !== TOKEN_LENGTH) {
     status.value = 'failed';
     return;
   }
-  status.value = 'loading';
+
   const now = new Bot(value);
+
   try {
     // 校验并获取头像
     const img = (await now.getProfile()).avatar;
@@ -74,10 +75,11 @@ async function onTokenInput(value: string) {
     // 更新数据
     avatar.value = img;
     bot.value = now;
+    // 在请求完成后才更新状态
     status.value = 'success';
   } catch (err) {
     avatar.value = undefined;
-    status.value = 'failed';
+    // status.value = 'failed';
   }
 }
 

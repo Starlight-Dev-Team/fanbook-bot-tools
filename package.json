@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "sh scripts/build.sh",
-    "start": "sh scripts/start.sh",
+    "start": "nuxt dev --port 5443 --ssr false",
     "prelint": "sh scripts/pre-lint.sh",
     "lint": "sh scripts/lint.sh",
     "postinstall": "nuxt prepare"
@@ -24,7 +24,7 @@
     "@arco-design/web-vue": "^2.44.1",
     "@pinia/nuxt": "^0.4.7",
     "@starlight-dev-team/fanbook-api-sdk": "0.6.3",
-    "@vueuse/core": "^10.1.2",
+    "@vueuse/core": "^10.9.0",
     "dexie": "^3.2.4",
     "json-bigint": "^1.0.0",
     "mitt": "^3.0.0",
