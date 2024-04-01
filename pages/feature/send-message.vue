@@ -77,6 +77,7 @@ interface BatchSendReturn {
   errors: Map<string, number>;
   errorCount: number;
 }
+
 /**
  * 批量发送消息，支持自定义聊天 ID 数组，其他。
  * @param chats 聊天 ID 数组
