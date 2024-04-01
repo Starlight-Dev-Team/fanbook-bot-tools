@@ -10,7 +10,7 @@ module.exports = {
     node: true,
   },
   parser: '@typescript-eslint/parser',
-  extends: 'standard-with-typescript',
+  extends: 'love',
   parserOptions: {
     parser: '@typescript-eslint/parser',
     project: ['./tsconfig.json'],
