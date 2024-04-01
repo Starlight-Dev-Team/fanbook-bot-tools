@@ -77,6 +77,7 @@ interface BatchSendReturn {
   errors: Map<string, number>;
   errorCount: number;
 }
+
 /**
  * 批量发送消息，支持自定义聊天 ID 数组，其他。
  * @param chats 聊天 ID 数组
@@ -123,6 +124,9 @@ async function sendAs1By1(): Promise<{ errorCount: number }> {
     let members: bigint[];
     let start = 1, end = STEP;
     do {
+      if (total.value % 30) {
+        break; // 如果不能整除30的话，就说明上一个请求已经获取完了（上一个请求到的成员数还不到30），就结束
+      }
       members = await bot.getChannelMembers({ // 获取成员列表
         guild,
         channel: chat,
