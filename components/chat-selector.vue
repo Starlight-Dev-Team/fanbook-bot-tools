@@ -31,6 +31,9 @@ export interface Props {
   /** ChatSelector 配置。 */
   selector?: SelectChatConfig;
 }
+export interface Events {
+  (event: 'update:modelValue', value: SelectedChat[]): void;
+}
 
 const props = withDefaults(defineProps<Props>(), {
   max: Infinity,
@@ -38,8 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
     bot: new Bot(useAccountStore().activeBotToken as string),
   }),
 });
-
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<Events>();
 
 const bot = new Bot(useAccountStore().activeBotToken as string);
 
@@ -67,19 +69,14 @@ function remove(index: number) {
 
 <template>
   <Space>
-    <Button
-      v-if='props.modelValue.length < props.max'
-      type='secondary'
-      shape='circle'
-      @click='add'
-    >
+    <Button v-if='modelValue.length < props.max' shape='circle' @click='add'>
       <template #icon>
         <IconPlus />
       </template>
     </Button>
     <Tag
-      v-for='(chat, index) in props.modelValue'
-      :key='String(chat.chat)'
+      v-for='(chat, index) in modelValue'
+      :key='chat.chat.toString()'
       closable
       @close='() => remove(index)'
     >

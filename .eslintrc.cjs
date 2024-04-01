@@ -21,6 +21,7 @@ module.exports = {
     'comma-dangle': [2, 'always-multiline'],
     'promise/param-names': [0],
     'no-return-assign': [0],
+    'n/no-callback-literal': [0],
     'semi': [2, 'always'],
     '@typescript-eslint/comma-dangle': [2, 'always-multiline'],
     '@typescript-eslint/explicit-function-return-type': [0],
