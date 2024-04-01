@@ -61,9 +61,7 @@ const TOKEN_LENGTH = 96;
     status.value = 'failed';
     return;
   }
-
   const now = new Bot(value);
-
   try {
     // 校验并获取头像
     const img = (await now.getProfile()).avatar;
@@ -79,7 +77,6 @@ const TOKEN_LENGTH = 96;
     status.value = 'success';
   } catch (err) {
     avatar.value = undefined;
-    // status.value = 'failed';
   }
 }
 
