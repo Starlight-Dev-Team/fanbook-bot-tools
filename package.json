@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "sh scripts/build.sh",
-    "start": "nuxt dev --port 5443 --ssr false",
+    "start": "sh scripts/start.sh",
     "prelint": "sh scripts/pre-lint.sh",
     "lint": "sh scripts/lint.sh",
     "postinstall": "nuxt prepare"
