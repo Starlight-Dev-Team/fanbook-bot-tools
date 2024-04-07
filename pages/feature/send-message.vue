@@ -39,7 +39,7 @@ function sendErrorToMsg(e: unknown): string | undefined {
     const code = res?.data?.error_code;
     const desc = res?.data?.description;
     if (code || desc) return BotErrorCode[code] ?? desc;
-    if (res.code === 'ERR_NETWORK') return '无权限发送消息';
+    if (res.code === 'ERR_NETWORK') return '无权限发送消息或机器人没有发言api白名单';
   }
   return undefined;
 }
@@ -221,6 +221,8 @@ async function handleSubmit() {
       </template>
       <ATypographyText v-else>
         失败原因：{{ Array.from(errors.keys())[0] }}
+        <br>
+        <a href="your_link_here" style="color: blue;">点击这里查看解决方法</a>
       </ATypographyText>
     </template>
     <template v-else>
