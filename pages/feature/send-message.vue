@@ -222,7 +222,7 @@ async function handleSubmit() {
       <ATypographyText v-else>
         失败原因：{{ Array.from(errors.keys())[0] }}
         <br>
-        <a href="your_link_here" style="color: blue;">点击这里查看解决方法</a>
+        <a href="http://docs.wdg.cloudns.ch/api%E9%94%99%E8%AF%AF%E7%A0%81/" style="color: blue;">点击这里查看解决方法</a>
       </ATypographyText>
     </template>
     <template v-else>
