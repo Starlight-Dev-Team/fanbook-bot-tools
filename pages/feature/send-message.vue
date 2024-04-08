@@ -39,7 +39,7 @@ function sendErrorToMsg(e: unknown): string | undefined {
     const code = res?.data?.error_code;
     const desc = res?.data?.description;
     if (code || desc) return BotErrorCode[code] ?? desc;
-    if (res.code === 'ERR_NETWORK') return '无权限发送消息或机器人没有发言api白名单';
+    if (res.code === 'ERR_NETWORK') return '无权限发送消息，或机器人不在发消息 API 白名单中';
   }
   return undefined;
 }
@@ -222,7 +222,9 @@ async function handleSubmit() {
       <ATypographyText v-else>
         失败原因：{{ Array.from(errors.keys())[0] }}
         <br>
-        <a href="http://docs.wdg.cloudns.ch/api%E9%94%99%E8%AF%AF%E7%A0%81/" style="color: blue;">点击这里查看解决方法</a>
+        <AppLink to="http://docs.wdg.cloudns.ch/api%E9%94%99%E8%AF%AF%E7%A0%81/">
+          不知道如何处理？点此查看常用解决方法
+        </AppLink>
       </ATypographyText>
     </template>
     <template v-else>
