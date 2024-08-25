@@ -12,6 +12,8 @@ import { useAccountStore } from '~~/stores/account';
 
 import { tryBigintify } from '~~/utils/util';
 
+import { BotErrorCode } from '~/utils/bot';
+
 import {
   Button,
   Form,
@@ -83,11 +85,18 @@ async function onSubmit() {
     });
   } catch (err) {
     console.error(err);
+    //如果错误码在BotErrorCode中，则显示错误码对应的错误信息
+    if (err.response?.data?.error_code in BotErrorCode) {
+      Message.error({
+        content: '设置失败：'+BotErrorCode[err.response?.data?.error_code],
+        duration: 6000,
+      });
+    } else {
     Message.error({
-      content: '设置失败',
+      content: '设置失败：'+err.response?.data?.description,
       duration: 6000,
     });
-  }
+  }}
   status.value = 'default';
 }
 </script>
