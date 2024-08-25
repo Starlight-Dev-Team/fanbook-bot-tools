@@ -1,43 +1,40 @@
 name: 测试
-on: pull_request
+
+on:
+  pull_request:
+  push:
+
 jobs:
   ESLint:
     runs-on: ubuntu-latest
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
       - name: 初始化 Node.js 环境
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: 获取缓存
-        uses: actions/cache@v4
-        with:
-          key: node_modules
-          path: node_modules
+          node-version-file: .node-version
+          cache: pnpm
       - name: 安装依赖
-        uses: pnpm/action-setup@v3
-        with:
-          run_install: true
+        run: pnpm install
       - name: 运行测试命令
         run: pnpm lint
+
   Build:
     runs-on: ubuntu-latest
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
       - name: 初始化 Node.js 环境
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: 获取缓存
-        uses: actions/cache@v4
-        with:
-          key: node_modules
-          path: node_modules
+          node-version-file: .node-version
+          cache: pnpm
       - name: 安装依赖
-        uses: pnpm/action-setup@v3
-        with:
-          run_install: true
+        run: pnpm install
       - name: 运行测试命令
         run: pnpm build
