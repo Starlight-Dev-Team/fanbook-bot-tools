@@ -1,5 +1,9 @@
 name: 测试
-on: pull_request
+
+on:
+  pull_request:
+  push:
+
 jobs:
   ESLint:
     runs-on: ubuntu-latest
@@ -17,6 +21,7 @@ jobs:
         run: pnpm install
       - name: 运行测试命令
         run: pnpm lint
+
   Build:
     runs-on: ubuntu-latest
     steps:
